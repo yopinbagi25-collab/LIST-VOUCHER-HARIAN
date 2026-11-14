@@ -629,10 +629,26 @@
         }
         const db = firebase.database();
 
-        var tanggalAktif = 1;
-        var bulanAktif = '10';
-        var tahunAktif = '2026';
+        // Periode awal mengikuti tanggal Indonesia Tengah (WITA), bukan tanggal statis.
+        function tanggalHariIniWITA() {
+            var parts = new Intl.DateTimeFormat('en-CA', {
+                timeZone: 'Asia/Makassar', year: 'numeric', month: '2-digit', day: '2-digit'
+            }).formatToParts(new Date());
+            var p = {};
+            parts.forEach(function(x) { if (x.type !== 'literal') p[x.type] = x.value; });
+            return { tgl: parseInt(p.day, 10), bln: p.month, thn: p.year };
+        }
+        var periodeAwal = tanggalHariIniWITA();
+        var tanggalAktif = periodeAwal.tgl;
+        var bulanAktif = periodeAwal.bln;
+        var tahunAktif = periodeAwal.thn;
         var isRemoteUpdating = false;
+        var isApplyingSharedPeriod = false;
+        var activeDataRef = null;
+        var activeDataHandler = null;
+        var activePeriodRef = null;
+        var activePeriodHandler = null;
+        var loadRequestToken = 0;
 
         function formatRupiah(angka) {
             return 'Rp. ' + Number(angka || 0).toLocaleString('id-ID');
@@ -796,6 +812,7 @@
         }
 
         function muatDataLocalDanRemote(tgl, bln, thn) {
+            var requestToken = ++loadRequestToken;
             var storageKey = getStorageKey(tgl, bln, thn);
             var cleanKey = storageKey.replace(/\./g, '_');
             var fields = document.querySelectorAll('.save-field');
@@ -805,6 +822,7 @@
             terapkanDataKeForm(saved, fields, defaultTglStr);
 
             db.ref('rekapan_harian/' + cleanKey).once('value').then(function(snapshot) {
+                if (requestToken !== loadRequestToken || storageKey !== getStorageKey(tanggalAktif, bulanAktif, tahunAktif)) return;
                 var remoteData = snapshot.val();
                 if (remoteData) {
                     localStorage.setItem(storageKey, JSON.stringify(remoteData));
@@ -814,7 +832,7 @@
         }
 
         function terapkanDataKeForm(rawJson, fields, defaultTglStr) {
-            isRemoteUpdating = true; // Kunci agar auto-save tidak memicu simpan balik ke server
+            isRemoteUpdating = true;
             if (rawJson) {
                 try {
                     var data = JSON.parse(rawJson);
@@ -833,18 +851,17 @@
             }
             hitungUlang();
             perbaruiTampilanNavigasi();
-            isRemoteUpdating = false; // Buka kembali kunci setelah selesai
+            isRemoteUpdating = false;
         }
 
         function setupRealtimeListener() {
+            // Lepas listener periode sebelumnya agar data tanggal lama tidak menimpa form.
+            if (activeDataRef && activeDataHandler) activeDataRef.off('value', activeDataHandler);
             var storageKey = getStorageKey(tanggalAktif, bulanAktif, tahunAktif);
             var cleanKey = storageKey.replace(/\./g, '_');
-            
-            // Matikan semua listener lama agar tidak menumpuk saat pindah tanggal
-            db.ref('rekapan_harian/').off();
-
-            db.ref('rekapan_harian/' + cleanKey).on('value', function(snapshot) {
-                if (isRemoteUpdating) return;
+            activeDataRef = db.ref('rekapan_harian/' + cleanKey);
+            activeDataHandler = function(snapshot) {
+                if (isRemoteUpdating || storageKey !== getStorageKey(tanggalAktif, bulanAktif, tahunAktif)) return;
                 var remoteData = snapshot.val();
                 if (remoteData) {
                     localStorage.setItem(storageKey, JSON.stringify(remoteData));
@@ -852,7 +869,43 @@
                     var defaultTglStr = formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif);
                     terapkanDataKeForm(JSON.stringify(remoteData), fields, defaultTglStr);
                 }
+            };
+            activeDataRef.on('value', activeDataHandler);
+        }
+
+        function simpanPeriodeAktifBersama() {
+            if (isApplyingSharedPeriod) return;
+            var periode = { tgl: tanggalAktif, bln: bulanAktif, thn: tahunAktif, updatedAt: Date.now() };
+            try { localStorage.setItem('nsnet_last_active_date', JSON.stringify(periode)); } catch (e) {}
+            db.ref('pengaturan/periode_aktif').set(periode).catch(function(err) {
+                console.warn('Periode aktif belum tersinkron ke Firebase:', err);
             });
+        }
+
+        function pasangSinkronisasiPeriode() {
+            if (activePeriodRef && activePeriodHandler) activePeriodRef.off('value', activePeriodHandler);
+            activePeriodRef = db.ref('pengaturan/periode_aktif');
+            activePeriodHandler = function(snapshot) {
+                var remote = snapshot.val();
+                if (!remote || !remote.tgl || !remote.bln || !remote.thn) {
+                    // Jika belum ada periode bersama, buat berdasarkan tanggal WITA perangkat pertama.
+                    simpanPeriodeAktifBersama();
+                    return;
+                }
+                var t = parseInt(remote.tgl, 10), b = String(remote.bln).padStart(2, '0'), y = String(remote.thn);
+                if (t < 1 || t > 31 || !/^\d{2}$/.test(b) || !/^\d{4}$/.test(y)) return;
+                if (t === tanggalAktif && b === bulanAktif && y === tahunAktif) return;
+                isApplyingSharedPeriod = true;
+                autoSaveData();
+                tanggalAktif = t; bulanAktif = b; tahunAktif = y;
+                document.getElementById('select-tanggal').value = String(tanggalAktif);
+                document.getElementById('select-bulan').value = bulanAktif;
+                document.getElementById('select-tahun').value = tahunAktif;
+                setupRealtimeListener();
+                muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
+                isApplyingSharedPeriod = false;
+            };
+            activePeriodRef.on('value', activePeriodHandler);
         }
 
         function pindahTanggal(tglBaru) {
@@ -862,6 +915,7 @@
             tanggalAktif = tglBaru;
             setupRealtimeListener();
             muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
+            simpanPeriodeAktifBersama();
         }
 
         function ubahBulanTahun() {
@@ -870,11 +924,12 @@
             tahunAktif = document.getElementById('select-tahun').value;
             setupRealtimeListener();
             muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
+            simpanPeriodeAktifBersama();
         }
 
         function simpanDataManual() {
             autoSaveData();
-            var waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            var waktu = new Date().toLocaleTimeString('id-ID', { timeZone: 'Asia/Makassar', hour: '2-digit', minute: '2-digit', second: '2-digit' });
             alert('✅ Data Tanggal ' + formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif) + ' berhasil disinkronkan ke Firebase (Pukul ' + waktu + ').');
         }
 
@@ -959,19 +1014,25 @@
                 var lastDate = localStorage.getItem('nsnet_last_active_date');
                 if (lastDate) {
                     var parsed = JSON.parse(lastDate);
-                    tanggalAktif = parsed.tgl || 1;
-                    bulanAktif = parsed.bln || '10';
-                    tahunAktif = parsed.thn || '2026';
+                    if (parsed.tgl && parsed.bln && parsed.thn) {
+                        tanggalAktif = parseInt(parsed.tgl, 10);
+                        bulanAktif = String(parsed.bln).padStart(2, '0');
+                        tahunAktif = String(parsed.thn);
+                    }
                 }
             } catch (e) {}
 
+            var selTanggal = document.getElementById('select-tanggal');
             var selBulan = document.getElementById('select-bulan');
             var selTahun = document.getElementById('select-tahun');
+            if (selTanggal) selTanggal.value = String(tanggalAktif);
             if (selBulan) selBulan.value = bulanAktif;
             if (selTahun) selTahun.value = tahunAktif;
 
+            perbaruiTampilanNavigasi();
             setupRealtimeListener();
             muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
+            pasangSinkronisasiPeriode();
 
             var allInputs = document.querySelectorAll('input');
             allInputs.forEach(function(input) {
