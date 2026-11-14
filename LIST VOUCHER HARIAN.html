@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>NSNET BILLING - REKAPAN VOUCHER INTERAKTIF (PERTANGGAL 1-31)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Calibri, 'Segoe UI', Arial, sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 15px;
+            background-color: #121824;
+            color: #fff;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* --- STYLING HEADER NSNET BILLING --- */
+        .nsnet-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #1e2530;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid #2d3748;
+            margin-bottom: 12px;
+            max-width: 1650px;
+            margin-left: auto;
+            margin-right: auto;
+            gap: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .nsnet-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nsnet-logo {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #0066ff, #00ccff);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 153, 255, 0.4);
+        }
+        .nsnet-logo svg {
+            width: 24px;
+            height: 24px;
+            fill: #fff;
+        }
+        .nsnet-title h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+        .nsnet-title span {
+            font-size: 11px;
+            color: #94a3b8;
+            letter-spacing: 1px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .nsnet-menu {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .nsnet-btn {
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .nsnet-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+        .btn-darkmode { background: #334155; border: 1px solid #475569; }
+        .btn-import { background: #8b5cf6; }
+        .btn-export { background: #10b981; }
+        .btn-backup { background: #0284c7; }
+        .btn-restore { background: #0d9488; }
+        .btn-reset { background: #ef4444; }
+        .btn-calc { background: #107c41; }
+        .btn-rekap { background: #f59e0b; color: #000; }
+
+        /* --- BAR NAVIGASI TANGGAL 1-31 (RINGKAS) --- */
+        .date-nav-container {
+            background: #1e2530;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid #2d3748;
+            margin-bottom: 18px;
+            max-width: 1650px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .date-nav-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .date-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .date-select {
+            background: #0f172a;
+            color: #fff;
+            border: 1px solid #475569;
+            padding: 7px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+        }
+        .date-select:focus {
+            border-color: #38bdf8;
+        }
+        .active-date-badge {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #38bdf8;
+        }
+
+        /* --- MODAL REKAP BULANAN 1-31 --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+        .modal-box {
+            background: #1e2530;
+            color: #f8fafc;
+            border: 1px solid #475569;
+            border-radius: 10px;
+            max-width: 100%;
+            width: 99%;
+            max-height: 97vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            text-align: center;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .modal-header h3 {
+            font-size: 18px !important;
+            font-weight: bold !important;
+            text-align: center;
+            width: 100%;
+        }
+        .modal-close {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .rekap-summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .rekap-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 14px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .rekap-card span {
+            font-size: 15px;
+            color: #94a3b8;
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .rekap-card strong {
+            font-size: 24px;
+            color: #38bdf8;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+        }
+        .rekap-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 0;
+            text-align: center;
+        }
+        .rekap-table th, .rekap-table td {
+            border: 1px solid #334155;
+            padding: 12px 14px;
+            height: auto;
+            color: #f8fafc;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .rekap-table th {
+            background: #0f172a;
+            color: #38bdf8;
+            font-size: 17px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* --- STYLING EXCEL CONTAINER --- */
+        .excel-container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            max-width: 1650px;
+            margin: 0 auto;
+            overflow-x: auto;
+            color: #000;
+            border-radius: 8px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 0 auto 25px auto;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        th, td {
+            border: 2px solid #595959;
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+            height: 42px;
+            white-space: nowrap;
+        }
+        
+        /* Input Field Styling */
+        td input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            text-align: center;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: bold;
+            color: #000;
+            padding: 2px 2px;
+        }
+        td input:focus {
+            background-color: #e8f0fe !important;
+            box-shadow: inset 0 0 0 2px #1a73e8;
+        }
+
+        /* Calculated / Read-only Field Styling */
+        .calculated {
+            background-color: rgba(0, 0, 0, 0.05);
+            font-weight: bold;
+            font-size: 14px;
+            padding: 0 6px;
+            cursor: default;
+            user-select: none;
+        }
+        
+        /* Specific Section Colors */
+        .header-main { font-weight: bold; font-size: 18px; height: 40px; line-height: 40px; }
+        .taluduyunu { background-color: #92D050; color: #000; }
+        .hulawa { background-color: #538DD5; color: #fff; }
+        .buntulia { background-color: #00B0F0; color: #fff; }
+        .balayo { background-color: #8b5cf6; color: #fff; }
+        .paguat { background-color: #FFC000; color: #000; }
+        
+        .tbl-sub { background-color: #B7DEE8; font-weight: bold; font-size: 14px; }
+        .row-data { background-color: #FDE9D9; }
+        .grey-bg { background-color: #D9D9D9; font-weight: bold; }
+
+        /* --- WARNA-WARNI TABEL RINGKASAN & KEUANGAN --- */
+        .bg-stok-head { background-color: #0ea5e9 !important; color: #fff !important; }
+        .bg-stok-sub { background-color: #bae6fd !important; color: #0c4a6e !important; font-weight: bold; }
+        
+        .bg-sisa-head { background-color: #f59e0b !important; color: #fff !important; }
+        .bg-sisa-sub { background-color: #fde68a !important; color: #78350f !important; font-weight: bold; }
+        
+        .bg-jual-head { background-color: #10b981 !important; color: #fff !important; }
+        .bg-jual-sub { background-color: #a7f3d0 !important; color: #064e3b !important; font-weight: bold; }
+
+        .bg-v3k { background-color: #e0f2fe !important; color: #0369a1 !important; font-weight: bold; }
+        .bg-v5k { background-color: #fef3c7 !important; color: #b45309 !important; font-weight: bold; }
+        .bg-tot-row { background-color: #e2e8f0 !important; color: #0f172a !important; font-weight: bold; }
+
+        /* Warna-warni Tabel Keuangan & Titipan */
+        .bg-titip-head { background-color: #8b5cf6 !important; color: #fff !important; }
+        .bg-titip-sub { background-color: #ddd6fe !important; color: #4c1d95 !important; font-weight: bold; }
+        .bg-titip-row { background-color: #f5f3ff !important; }
+
+        .bg-bulanan-head { background-color: #3b82f6 !important; color: #fff !important; }
+        .bg-bulanan-val { background-color: #dbeafe !important; color: #1e3a8a !important; }
+
+        .bg-voucher-head { background-color: #ec4899 !important; color: #fff !important; }
+        .bg-voucher-val { background-color: #fce7f3 !important; color: #831843 !important; }
+
+        .bg-expense-lbl { background-color: #fee2e2 !important; color: #991b1b !important; font-weight: bold; }
+        .bg-expense-inp { background-color: #fff1f2 !important; }
+        
+        .bg-kotor-lbl { background-color: #fef08a !important; color: #854d0e !important; font-weight: bold; }
+        .bg-kotor-val { background-color: #fef9c3 !important; color: #713f12 !important; }
+
+        .bg-bersih-lbl { background-color: #22c55e !important; color: #fff !important; font-weight: bold; }
+        .bg-bersih-val { background-color: #dcfce7 !important; color: #14532d !important; }
+
+        /* Dark Mode Theme Classes - Refined Professional Palette */
+        body.dark-mode { background-color: #0b0f17; color: #f8fafc; }
+        body.dark-mode .excel-container { background-color: #131b2e; color: #f8fafc; border: 1px solid #334155; }
+        body.dark-mode table { border-color: #334155; }
+        body.dark-mode th, body.dark-mode td { border-color: #334155; color: #f8fafc; }
+        body.dark-mode td input { color: #f8fafc; background: transparent; font-weight: bold; }
+        body.dark-mode td input::placeholder { color: #64748b; }
+        body.dark-mode td input:focus { background-color: #1e293b !important; color: #fff; }
+        body.dark-mode .calculated { background-color: rgba(255, 255, 255, 0.04); color: #38bdf8; font-weight: bold; }
+        body.dark-mode .row-data { background-color: #172033 !important; color: #f8fafc; }
+        body.dark-mode .tbl-sub { background-color: #1e293b !important; color: #e2e8f0 !important; font-weight: bold; }
+        body.dark-mode .bg-titip-row { background-color: #172033 !important; color: #f8fafc; }
+        body.dark-mode .bg-titip-sub { background-color: #1e293b !important; color: #cbd5e1 !important; font-weight: bold; }
+        body.dark-mode .bg-v3k { background-color: #0369a1 !important; color: #e0f2fe !important; font-weight: bold; }
+        body.dark-mode .bg-v5k { background-color: #b45309 !important; color: #fef3c7 !important; font-weight: bold; }
+        body.dark-mode .bg-tot-row { background-color: #1e293b !important; color: #f8fafc !important; font-weight: bold; }
+        
+        /* Refined financial badge colors in dark mode */
+        body.dark-mode .bg-titip-head { background-color: #4f46e5 !important; color: #fff !important; }
+        body.dark-mode .bg-bulanan-head { background-color: #2563eb !important; color: #fff !important; }
+        body.dark-mode .bg-bulanan-val { background-color: #1e3a8a !important; color: #bfdbfe !important; font-weight: bold; }
+        body.dark-mode .bg-voucher-head { background-color: #0d9488 !important; color: #fff !important; }
+        body.dark-mode .bg-voucher-val { background-color: #134e4a !important; color: #ccfbf1 !important; font-weight: bold; }
+        body.dark-mode .bg-kotor-lbl { background-color: #b45309 !important; color: #fff !important; font-weight: bold; }
+        body.dark-mode .bg-kotor-val { background-color: #78350f !important; color: #fef3c7 !important; font-weight: bold; }
+        body.dark-mode .bg-expense-lbl { background-color: #991b1b !important; color: #fff !important; font-weight: bold; }
+        body.dark-mode .bg-expense-inp { background-color: #450a0a !important; }
+        body.dark-mode .bg-expense-inp input { color: #fecaca !important; font-weight: bold; }
+        body.dark-mode .bg-bersih-lbl { background-color: #15803d !important; color: #fff !important; font-weight: bold; }
+        body.dark-mode .bg-bersih-val { background-color: #14532d !important; color: #dcfce7 !important; font-weight: bold; }
+    </style>
+</head>
+<body id="body-main">
+
+    <!-- HEADER NSNET BILLING SYSTEM CONTROL CENTER -->
+    <div class="nsnet-header">
+        <div class="nsnet-brand">
+            <div class="nsnet-logo">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 3C6.95 3 3.15 4.85 0 7.22L12 22L24 7.22C20.85 4.85 17.05 3 12 3M12 5.5C15.82 5.5 19.16 6.88 21.82 8.82L12 20.15L2.18 8.82C4.84 6.88 8.18 5.5 12 5.5M12 8C9.5 8 7.25 8.87 5.47 10.27L12 17.88L18.53 10.27C16.75 8.87 14.5 8 12 8Z"/>
+                </svg>
+            </div>
+            <div class="nsnet-title">
+                <h1>NSNET BILLING</h1>
+                <span>SYSTEM CONTROL CENTER • REKAP HARIAN 1–31</span>
+            </div>
+        </div>
+        <div class="nsnet-menu">
+            <button type="button" class="nsnet-btn btn-rekap" onclick="bukaRekapBulanan()">📊 REKAP TGL 1-31</button>
+            <button type="button" class="nsnet-btn btn-calc" onclick="simpanDataManual()">💾 SIMPAN DATA</button>
+            <button type="button" class="nsnet-btn btn-darkmode" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+            <button type="button" class="nsnet-btn btn-import" onclick="importCSV()">📥 IMPORT CSV</button>
+            <button type="button" class="nsnet-btn btn-export" onclick="exportCSV()">📤 EXPORT CSV</button>
+            <button type="button" class="nsnet-btn btn-backup" onclick="backupJSON()">💾 BACKUP ALL JSON</button>
+            <button type="button" class="nsnet-btn btn-restore" onclick="restoreJSON()">📂 RESTORE JSON</button>
+            <button type="button" class="nsnet-btn btn-reset" onclick="resetHariIni()">🗑️ RESET TGL INI</button>
+        </div>
+    </div>
+
+    <!-- NAVIGASI TANGGAL RINGKAS (DROPDOWN TANGGAL, BULAN, TAHUN & BADGE AKTIF) -->
+    <div class="date-nav-container">
+        <div class="date-nav-top">
+            <div class="date-controls">
+                <select id="select-tanggal" class="date-select" onchange="pindahTanggal(parseInt(this.value, 10))">
+                    <option value="1">Tanggal 01</option>
+                    <option value="2">Tanggal 02</option>
+                    <option value="3">Tanggal 03</option>
+                    <option value="4">Tanggal 04</option>
+                    <option value="5">Tanggal 05</option>
+                    <option value="6">Tanggal 06</option>
+                    <option value="7">Tanggal 07</option>
+                    <option value="8">Tanggal 08</option>
+                    <option value="9">Tanggal 09</option>
+                    <option value="10">Tanggal 10</option>
+                    <option value="11">Tanggal 11</option>
+                    <option value="12">Tanggal 12</option>
+                    <option value="13">Tanggal 13</option>
+                    <option value="14">Tanggal 14</option>
+                    <option value="15">Tanggal 15</option>
+                    <option value="16">Tanggal 16</option>
+                    <option value="17">Tanggal 17</option>
+                    <option value="18">Tanggal 18</option>
+                    <option value="19">Tanggal 19</option>
+                    <option value="20">Tanggal 20</option>
+                    <option value="21">Tanggal 21</option>
+                    <option value="22">Tanggal 22</option>
+                    <option value="23">Tanggal 23</option>
+                    <option value="24">Tanggal 24</option>
+                    <option value="25">Tanggal 25</option>
+                    <option value="26">Tanggal 26</option>
+                    <option value="27">Tanggal 27</option>
+                    <option value="28">Tanggal 28</option>
+                    <option value="29">Tanggal 29</option>
+                    <option value="30">Tanggal 30</option>
+                    <option value="31">Tanggal 31</option>
+                </select>
+                <select id="select-bulan" class="date-select" onchange="ubahBulanTahun()">
+                    <option value="01">Januari</option>
+                    <option value="02">Februari</option>
+                    <option value="03">Maret</option>
+                    <option value="04">April</option>
+                    <option value="05">Mei</option>
+                    <option value="06">Juni</option>
+                    <option value="07">Juli</option>
+                    <option value="08">Agustus</option>
+                    <option value="09">September</option>
+                    <option value="10" selected>Oktober</option>
+                    <option value="11">November</option>
+                    <option value="12">Desember</option>
+                </select>
+                <select id="select-tahun" class="date-select" onchange="ubahBulanTahun()">
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026" selected>2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                    <option value="2031">2031</option>
+                    <option value="2032">2032</option>
+                    <option value="2033">2033</option>
+                    <option value="2034">2034</option>
+                    <option value="2035">2035</option>
+                    <option value="2036">2036</option>
+                    <option value="2037">2037</option>
+                    <option value="2038">2038</option>
+                    <option value="2039">2039</option>
+                    <option value="2040">2040</option>
+                    <option value="2041">2041</option>
+                    <option value="2042">2042</option>
+                    <option value="2043">2043</option>
+                    <option value="2044">2044</option>
+                    <option value="2045">2045</option>
+                    <option value="2046">2046</option>
+                    <option value="2047">2047</option>
+                    <option value="2048">2048</option>
+                    <option value="2049">2049</option>
+                    <option value="2050">2050</option>
+                </select>
+            </div>
+            <div class="active-date-badge">
+                📅 Aktif: <span id="label-tanggal-aktif">01/10/2026</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL REKAP BULANAN 1-31 -->
+    <div class="modal-overlay" id="modal-rekap">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 style="margin:0; font-size:16px;">📊 RINGKASAN REKAPITULASI TANGGAL 1 – 31 (<span id="rekap-periode-label"></span>)</h3>
+                <button type="button" class="modal-close" onclick="tutupRekapBulanan()">✖ Tutup</button>
+            </div>
+            <div class="rekap-summary-cards">
+                <div class="rekap-card">
+                    <span>TOTAL VOUCHER 3.000 TERJUAL</span>
+                    <strong id="rek-v3k">0 pcs</strong>
+                </div>
+                <div class="rekap-card">
+                    <span>TOTAL VOUCHER 5.000 TERJUAL</span>
+                    <strong id="rek-v5k">0 pcs</strong>
+                </div>
+                <div class="rekap-card">
+                    <span>TOTAL PENDAPATAN KOTOR</span>
+                    <strong id="rek-kotor" style="color:#facc15;">Rp. 0</strong>
+                </div>
+                <div class="rekap-card">
+                    <span>TOTAL PENDAPATAN BERSIH</span>
+                    <strong id="rek-bersih" style="color:#4ade80;">Rp. 0</strong>
+                </div>
+            </div>
+            <table class="rekap-table">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Terjual 3.000</th>
+                        <th>Terjual 5.000</th>
+                        <th>Bulanan</th>
+                        <th>Pendapatan Kotor</th>
+                        <th>Pengeluaran</th>
+                        <th>Pendapatan Bersih</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="rekap-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- REKAPAN EXCEL CONTAINER -->
+    <div class="excel-container">
+        <!-- SCRIPT GENERATOR 5 TABEL WILAYAH -->
+        <script>
+            function renderTabelWilayah(id, namaWilayah, warnaClass) {
+                let html = `<table id="${id}">`;
+                html += `<tr><td colspan="16" class="header-main ${warnaClass}">REKAPAN ORDERAN ${namaWilayah}</td></tr>`;
+                html += `<tr class="tbl-sub">
+                    <td style="width:45px; padding: 0 4px;">NO</td>
+                    <td style="width:120px; padding: 0 6px;">VOUCHER</td>
+                    <td style="width:115px; padding: 0 6px; line-height: 1.2;">STOK VOUCHER</td>
+                    <td style="width:130px; padding: 0 6px; line-height: 1.2;">SISA STOK VOUCHER</td>
+                    <td colspan="10" style="padding: 0 6px;">ORDERAN VOUCHER</td>
+                    <td style="width:140px; padding: 0 6px;">TOTAL PERKOLOM</td>
+                    <td style="width:150px; padding: 0 6px;">TOTAL KESELURUHAN</td>
+                </tr>`;
+
+                let dataBaris = [
+                    { ket: "3000" },
+                    { ket: "5000" },
+                    { ket: "BULANAN" }
+                ];
+
+                dataBaris.forEach((item, idx) => {
+                    html += `<tr class="row-data">`;
+                    if(idx === 0) {
+                        let noVal = id==='tbl-taluduyunu'?1:id==='tbl-hulawa'?2:id==='tbl-buntulia'?3:id==='tbl-balayo'?4:5;
+                        html += `<td rowspan="3" class="calculated" style="font-weight:bold;">${noVal}</td>`;
+                    }
+                    html += `<td class="calculated" style="font-weight:bold;"><input type="hidden" value="${item.ket}" class="ket">${item.ket}</td>`;
+                    if(item.ket !== "BULANAN") {
+                        html += `<td><input type="text" inputmode="numeric" value="" class="stok save-field reset-target"></td>`;
+                    } else {
+                        html += `<td class="calculated" style="color: #94a3b8;">-</td>`;
+                    }
+                    html += `<td class="calculated sisa">0</td>`;
+                    
+                    for(let c=0; c<10; c++) {
+                        html += `<td style="width:65px; height:42px;"><input type="text" inputmode="numeric" value="" class="ord save-field reset-target" style="font-size:15px; font-weight:bold;"></td>`;
+                    }
+
+                    html += `<td class="calculated tot-kolom">Rp. 0</td>`;
+                    if(idx === 0) {
+                        html += `<td rowspan="3" class="calculated tot-wilayah" style="font-size:15px; font-weight:bold;">Rp. 0</td>`;
+                    }
+                    html += `</tr>`;
+                });
+
+                html += `</table>`;
+                document.write(html);
+            }
+        </script>
+
+        <script>renderTabelWilayah('tbl-taluduyunu', 'TALUDUYUNU', 'taluduyunu');</script>
+        <script>renderTabelWilayah('tbl-hulawa', 'HULAWA', 'hulawa');</script>
+        <script>renderTabelWilayah('tbl-buntulia', 'BUNTULIA', 'buntulia');</script>
+        <script>renderTabelWilayah('tbl-balayo', 'BALAYO', 'balayo');</script>
+        <script>renderTabelWilayah('tbl-paguat', 'PAGUAT', 'paguat');</script>
+
+        <!-- TOTAL KESELURUHAN STOK & VOUCHER TERJUAL -->
+        <table>
+            <tr>
+                <td colspan="5" class="bg-stok-head" style="font-weight:bold;">TOTAL SELURUH STOK VOUCHER</td>
+                <td colspan="10" class="bg-sisa-head" style="font-weight:bold;">TOTAL SELURUH SISA STOK VOUCHER</td>
+                <td colspan="2" class="bg-jual-head" style="font-weight:bold;">TOTAL SELURUH VOUCHER TERJUAL</td>
+            </tr>
+            <tr>
+                <td colspan="2" class="bg-stok-sub">VOUCHER</td>
+                <td colspan="3" class="bg-sisa-sub">SISA STOK VOUCHER</td>
+                <td colspan="10" class="bg-jual-sub">VOUCHER YANG TERJUAL</td>
+                <td colspan="2" class="bg-jual-sub">JUMLAH VOUCHER TERJUAL</td>
+            </tr>
+            <tr>
+                <td class="bg-v3k">3.000</td><td colspan="4" class="calculated bg-v3k" id="tot-stok-3000">0</td>
+                <td class="bg-v3k">3.000</td><td colspan="9" class="calculated bg-v3k" id="tot-sisa-3000">0</td>
+                <td colspan="2" class="calculated bg-v3k" id="tot-jual-3000">0</td>
+            </tr>
+            <tr>
+                <td class="bg-v5k">5.000</td><td colspan="4" class="calculated bg-v5k" id="tot-stok-5000">0</td>
+                <td class="bg-v5k">5.000</td><td colspan="9" class="calculated bg-v5k" id="tot-sisa-5000">0</td>
+                <td colspan="2" class="calculated bg-v5k" id="tot-jual-5000">0</td>
+            </tr>
+            <tr>
+                <td class="bg-tot-row">TOTAL</td><td colspan="4" class="calculated bg-tot-row" id="grand-stok">0</td>
+                <td class="bg-tot-row">TOTAL</td><td colspan="9" class="calculated bg-tot-row" id="grand-sisa">0</td>
+                <td class="bg-tot-row">TOTAL</td><td class="calculated bg-tot-row" id="grand-jual">0</td>
+            </tr>
+        </table>
+
+        <!-- VOUCHER TITIPAN, PENDAPATAN & EXPENSES -->
+        <table id="tbl-keuangan">
+            <tr>
+                <td colspan="5" class="bg-titip-head" style="font-weight:bold;">VOUCHER TITIPAN / SETORAN BULANAN PELANGGAN</td>
+                <td colspan="6" class="bg-bulanan-head" style="font-weight:bold;">TOTAL PENDAPATAN BULANAN</td>
+                <td colspan="6" class="bg-voucher-head" style="font-weight:bold;">RINGKASAN KEUANGAN & PENDAPATAN</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-sub">N A M A</td><td colspan="1" class="bg-titip-sub">VOUCHER 3.000 / BULANAN 50.000</td><td colspan="1" class="bg-titip-sub">VOUCHER 5.000 / BULANAN 75.000</td>
+                <td colspan="6" rowspan="2" class="calculated bg-bulanan-val" id="tot-pendapatan-bulanan" style="font-size:16px; font-weight:bold;">Rp. 0</td>
+                <td colspan="3" class="bg-v3k" style="width: 120px; text-align: center; border-right: 2px solid #595959; font-size: 12px;">VOUCHER - 3.000</td><td colspan="3" class="calculated bg-voucher-val" id="tot-penjualan-3000" style="width: 120px; text-align: center; font-size: 14px;">0</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 1" class="save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                <td colspan="3" class="bg-v5k" style="width: 120px; text-align: center; border-right: 2px solid #595959; font-size: 12px;">VOUCHER - 5.000</td><td colspan="3" class="calculated bg-voucher-val" id="tot-penjualan-5000" style="width: 120px; text-align: center; font-size: 14px;">0</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 2" class="save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                <td colspan="6" class="bg-voucher-head">TOTAL PENDAPATAN VOUCHER</td>
+                <td colspan="6" class="calculated bg-voucher-val" id="tot-pendapatan-voucher-gabung" style="font-size:15px; font-weight:bold;">Rp. 0</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 3" class="save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                <td colspan="6" class="bg-kotor-lbl">TOTAL PENDAPATAN KOTOR</td>
+                <td colspan="6" class="calculated bg-kotor-val" id="tot-pendapatan-kotor" style="font-size:15px; font-weight:bold;">Rp. 0</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 4" class="save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                <td colspan="6" class="bg-expense-lbl">TOTAL PENGELUARAN TEKNISI</td>
+                <td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 5" class="save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                <td colspan="6" class="bg-expense-lbl">TOTAL PENGELUARAN ADMIN</td>
+                <td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-admin" class="save-field reset-target" placeholder="Rp. 0"></td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 6" class="save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                <td colspan="6" class="bg-expense-lbl">TOTAL GAJI TEKNISI</td>
+                <td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="gaji-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 7" class="save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                <td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 8" class="save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                <td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 9" class="save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                <td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 10" class="save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                <td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 11" class="save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                <td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 12" class="save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
+                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                <td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>
+            </tr>
+            <tr>
+                <td colspan="3" class="bg-titip-head" style="font-weight:bold;">TOTAL TITIPAN DAN  BULANAN</td>
+                <td colspan="1" class="calculated bg-titip-sub" id="tot-titipan-3k">0</td>
+                <td colspan="1" class="calculated bg-titip-sub" id="tot-titipan-5k">0</td>
+                <td colspan="6" class="bg-bersih-lbl" style="font-size:15px; font-weight:bold;">TOTAL PENDAPATAN BERSIH</td>
+                <td colspan="6" class="calculated bg-bersih-val" id="tot-pendapatan-bersih" style="font-size:16px; font-weight:bold;">Rp. 0</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- SCRIPT FUNGSI OTOMATIS & MANAJEMEN PERTANGGAL 1-31 -->
+    <script>
+        var tanggalAktif = 1;
+        var bulanAktif = '10';
+        var tahunAktif = '2026';
+
+        function formatRupiah(angka) {
+            return 'Rp. ' + Number(angka || 0).toLocaleString('id-ID');
+        }
+
+        function pad2(num) {
+            return String(num).padStart(2, '0');
+        }
+
+        function getStorageKey(tgl, bln, thn) {
+            return 'nsnet_rekapan_v46_' + thn + '_' + bln + '_tgl_' + pad2(tgl);
+        }
+
+        function formatTanggalLengkap(tgl, bln, thn) {
+            return pad2(tgl) + '/' + bln + '/' + thn;
+        }
+
+        function cekTanggalTerisi(tgl, bln, thn) {
+            try {
+                var raw = localStorage.getItem(getStorageKey(tgl, bln, thn));
+                if (!raw) return false;
+                var data = JSON.parse(raw);
+                for (var key in data) {
+                    if (key !== 'meta_summary' && data[key] !== '' && !/^\d{2}\/\d{2}\/\d{4}$/.test(data[key])) {
+                        return true;
+                    }
+                }
+            } catch (e) {}
+            return false;
+        }
+
+        function perbaruiTampilanNavigasi() {
+            var selTgl = document.getElementById('select-tanggal');
+            if (selTgl) selTgl.value = String(tanggalAktif);
+
+            var lblAktif = document.getElementById('label-tanggal-aktif');
+            if (lblAktif) lblAktif.innerText = formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif);
+        }
+
+        function hitungUlang() {
+            var tabelIds = ['tbl-taluduyunu', 'tbl-hulawa', 'tbl-buntulia', 'tbl-balayo', 'tbl-paguat'];
+            
+            var totStok3k = 0, totStok5k = 0;
+            var totSisa3k = 0, totSisa5k = 0;
+            var totJual3k = 0, totJual5k = 0;
+            var totalPendapatanBulananSum = 0;
+
+            tabelIds.forEach(function(id) {
+                var tbl = document.getElementById(id);
+                if (!tbl) return;
+                var rows = tbl.querySelectorAll('tr.row-data');
+
+                var totalWilayah = 0;
+
+                rows.forEach(function(row) {
+                    var ket = row.querySelector('.ket') ? row.querySelector('.ket').value.trim() : '';
+                    var stokInput = row.querySelector('.stok');
+                    var stokVal = stokInput && stokInput.value !== '' ? parseFloat(stokInput.value) : 0;
+                    
+                    var ordInputs = row.querySelectorAll('.ord');
+                    var sumOrd = 0;
+                    ordInputs.forEach(function(input) {
+                        if (input.value !== '') {
+                            sumOrd += parseFloat(input.value) || 0;
+                        }
+                    });
+
+                    var sisaCell = row.querySelector('.sisa');
+                    if (ket === 'BULANAN') {
+                        if (sisaCell) {
+                            sisaCell.innerText = '-';
+                            sisaCell.style.color = '';
+                            sisaCell.style.fontWeight = 'bold';
+                        }
+                    } else {
+                        var sisaVal = stokVal - sumOrd;
+                        if (sisaCell) {
+                            sisaCell.innerText = sisaVal;
+                            if (sisaVal < 0) {
+                                sisaCell.style.color = '#dc2626';
+                                sisaCell.style.fontWeight = 'bold';
+                            } else {
+                                sisaCell.style.color = '';
+                                sisaCell.style.fontWeight = 'bold';
+                            }
+                        }
+                    }
+
+                    var totKolomCell = row.querySelector('.tot-kolom');
+                    var totKolomVal = 0;
+                    if (ket === '3000') {
+                        totKolomVal = sumOrd * 2000;
+                        totStok3k += stokVal;
+                        totSisa3k += sisaVal;
+                        totJual3k += sumOrd;
+                    } else if (ket === '5000') {
+                        totKolomVal = sumOrd * 4000;
+                        totStok5k += stokVal;
+                        totSisa5k += sisaVal;
+                        totJual5k += sumOrd;
+                    } else if (ket === 'BULANAN') {
+                        totKolomVal = sumOrd * 1000;
+                        totalPendapatanBulananSum += (sumOrd * 1000);
+                    }
+
+                    if (totKolomCell) {
+                        totKolomCell.innerText = formatRupiah(totKolomVal);
+                    }
+                    totalWilayah += totKolomVal;
+                });
+
+                var totWilayahCell = tbl.querySelector('.tot-wilayah');
+                if (totWilayahCell) totWilayahCell.innerText = formatRupiah(totalWilayah);
+            });
+
+            document.getElementById('tot-stok-3000').innerText = totStok3k;
+            document.getElementById('tot-stok-5000').innerText = totStok5k;
+            document.getElementById('grand-stok').innerText = totStok3k + totStok5k;
+
+            document.getElementById('tot-sisa-3000').innerText = totSisa3k;
+            document.getElementById('tot-sisa-5000').innerText = totSisa5k;
+            document.getElementById('grand-sisa').innerText = totSisa3k + totSisa5k;
+
+            document.getElementById('tot-jual-3000').innerText = totJual3k;
+            document.getElementById('tot-jual-5000').innerText = totJual5k;
+            document.getElementById('grand-jual').innerText = totJual3k + totJual5k;
+
+            document.getElementById('tot-pendapatan-bulanan').innerText = formatRupiah(totalPendapatanBulananSum);
+            
+            document.getElementById('tot-penjualan-3000').innerText = totJual3k;
+            document.getElementById('tot-penjualan-5000').innerText = totJual5k;
+
+            var totalRupiahVoucher3k = totJual3k * 2000;
+            var totalRupiahVoucher5k = totJual5k * 4000;
+            var totalPendapatanVoucherGabung = totalRupiahVoucher3k + totalRupiahVoucher5k;
+            document.getElementById('tot-pendapatan-voucher-gabung').innerText = formatRupiah(totalPendapatanVoucherGabung);
+
+            var angkaKotor = totalPendapatanBulananSum + totalRupiahVoucher3k + totalRupiahVoucher5k;
+            document.getElementById('tot-pendapatan-kotor').innerText = formatRupiah(angkaKotor);
+
+            var pTeknisi = parseFloat(document.getElementById('pengeluaran-teknisi').value.replace(/[^0-9.-]+/g,"")) || 0;
+            var pAdmin = parseFloat(document.getElementById('pengeluaran-admin').value.replace(/[^0-9.-]+/g,"")) || 0;
+            var gTeknisi = parseFloat(document.getElementById('gaji-teknisi').value.replace(/[^0-9.-]+/g,"")) || 0;
+            var totalPengeluaran = pTeknisi + pAdmin + gTeknisi;
+
+            var totBersih = angkaKotor - totalPengeluaran;
+            document.getElementById('tot-pendapatan-bersih').innerText = formatRupiah(totBersih);
+
+            var sumTitip3k = 0, sumTitip5k = 0;
+            document.querySelectorAll('.v-titip-3k').forEach(function(i) { sumTitip3k += parseFloat(i.value) || 0; });
+            document.querySelectorAll('.v-titip-5k').forEach(function(i) { sumTitip5k += parseFloat(i.value) || 0; });
+            document.getElementById('tot-titipan-3k').innerText = sumTitip3k;
+            document.getElementById('tot-titipan-5k').innerText = sumTitip5k;
+
+            return {
+                jual3k: totJual3k,
+                jual5k: totJual5k,
+                bulanan: totalPendapatanBulananSum,
+                kotor: angkaKotor,
+                pengeluaran: totalPengeluaran,
+                bersih: totBersih
+            };
+        }
+
+        function autoSaveData() {
+            var summary = hitungUlang();
+            var fields = document.querySelectorAll('.save-field');
+            var data = { meta_summary: summary };
+            fields.forEach(function(field, index) {
+                data['f_' + index] = field.value;
+            });
+            try {
+                localStorage.setItem(getStorageKey(tanggalAktif, bulanAktif, tahunAktif), JSON.stringify(data));
+                localStorage.setItem('nsnet_last_active_date', JSON.stringify({ tgl: tanggalAktif, bln: bulanAktif, thn: tahunAktif }));
+            } catch (e) {
+                console.warn('Gagal auto-save:', e);
+            }
+            perbaruiTampilanNavigasi();
+        }
+
+        function muatDataTanggal(tgl, bln, thn) {
+            var saved = null;
+            try {
+                saved = localStorage.getItem(getStorageKey(tgl, bln, thn));
+            } catch (e) {}
+
+            var fields = document.querySelectorAll('.save-field');
+            var defaultTglStr = formatTanggalLengkap(tgl, bln, thn);
+
+            if (saved) {
+                try {
+                    var data = JSON.parse(saved);
+                    fields.forEach(function(field, index) {
+                        if (data['f_' + index] !== undefined) {
+                            field.value = data['f_' + index];
+                        } else {
+                            field.value = field.classList.contains('tgl-input') ? defaultTglStr : '';
+                        }
+                    });
+                } catch (e) {
+                    console.warn('Gagal memuat data:', e);
+                }
+            } else {
+                fields.forEach(function(field) {
+                    if (field.classList.contains('tgl-input')) {
+                        field.value = defaultTglStr;
+                    } else {
+                        field.value = '';
+                    }
+                });
+            }
+            hitungUlang();
+            perbaruiTampilanNavigasi();
+        }
+
+        function pindahTanggal(tglBaru) {
+            tglBaru = parseInt(tglBaru, 10);
+            if (isNaN(tglBaru) || tglBaru < 1 || tglBaru > 31) return;
+            autoSaveData();
+            tanggalAktif = tglBaru;
+            muatDataTanggal(tanggalAktif, bulanAktif, tahunAktif);
+        }
+
+        function ubahBulanTahun() {
+            autoSaveData();
+            bulanAktif = document.getElementById('select-bulan').value;
+            tahunAktif = document.getElementById('select-tahun').value;
+            muatDataTanggal(tanggalAktif, bulanAktif, tahunAktif);
+        }
+
+        function simpanDataManual() {
+            autoSaveData();
+            var waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            alert('✅ Data Tanggal ' + formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif) + ' berhasil disimpan (Pukul ' + waktu + ').');
+        }
+
+        function bukaRekapBulanan() {
+            autoSaveData();
+            var selBulan = document.getElementById('select-bulan');
+            var namaBulan = selBulan.options[selBulan.selectedIndex].text;
+            document.getElementById('rekap-periode-label').innerText = namaBulan + ' ' + tahunAktif;
+
+            var tot3k = 0, tot5k = 0, totKotor = 0, totBersih = 0;
+            var tbody = document.getElementById('rekap-table-body');
+            tbody.innerHTML = '';
+
+            var sumBulanan = 0;
+            var sumPengeluaran = 0;
+
+            for (var d = 1; d <= 31; d++) {
+                var raw = null;
+                try { raw = localStorage.getItem(getStorageKey(d, bulanAktif, tahunAktif)); } catch (e) {}
+                var s = { jual3k: 0, jual5k: 0, bulanan: 0, kotor: 0, pengeluaran: 0, bersih: 0 };
+                var terisi = false;
+                if (raw) {
+                    try {
+                        var parsed = JSON.parse(raw);
+                        if (parsed.meta_summary) {
+                            s = parsed.meta_summary;
+                            terisi = cekTanggalTerisi(d, bulanAktif, tahunAktif);
+                        }
+                    } catch (e) {}
+                }
+
+                tot3k += s.jual3k || 0;
+                tot5k += s.jual5k || 0;
+                sumBulanan += s.bulanan || 0;
+                totKotor += s.kotor || 0;
+                sumPengeluaran += s.pengeluaran || 0;
+                totBersih += s.bersih || 0;
+
+                var tr = document.createElement('tr');
+                tr.style.opacity = terisi ? '1' : '0.45';
+                tr.innerHTML = 
+                    '<td style="text-align:center; font-weight:bold; font-size:16px;"><strong>' + pad2(d) + '/' + bulanAktif + '/' + tahunAktif + '</strong></td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:16px;">' + (s.jual3k || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:16px;">' + (s.jual5k || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:16px;">' + formatRupiah(s.bulanan || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:16px;">' + formatRupiah(s.kotor || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:16px; color:#f87171;">' + formatRupiah(s.pengeluaran || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:16px; color:#4ade80;">' + formatRupiah(s.bersih || 0) + '</td>' +
+                    '<td style="text-align:center;"><button type="button" onclick="tutupRekapBulanan(); pindahTanggal(' + d + ');" style="background:#0284c7; color:#fff; border:none; border-radius:6px; padding:8px 16px; cursor:pointer; font-size:14px; font-weight:bold;">Buka</button></td>';
+                tbody.appendChild(tr);
+            }
+
+            // Tambahkan baris TOTAL KESELURUHAN di bawah tanggal 31
+            var trTot = document.createElement('tr');
+            trTot.style.background = '#0f172a';
+            trTot.style.borderTop = '3px solid #38bdf8';
+            trTot.innerHTML = 
+                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#38bdf8;">TOTAL</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#38bdf8;">' + tot3k.toLocaleString('id-ID') + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#38bdf8;">' + tot5k.toLocaleString('id-ID') + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#38bdf8;">' + formatRupiah(sumBulanan) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#facc15;">' + formatRupiah(totKotor) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#f87171;">' + formatRupiah(sumPengeluaran) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#4ade80;">' + formatRupiah(totBersih) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#94a3b8;">-</td>';
+            tbody.appendChild(trTot);
+
+            document.getElementById('rek-v3k').innerText = tot3k.toLocaleString('id-ID') + ' pcs';
+            document.getElementById('rek-v5k').innerText = tot5k.toLocaleString('id-ID') + ' pcs';
+            document.getElementById('rek-kotor').innerText = formatRupiah(totKotor);
+            document.getElementById('rek-bersih').innerText = formatRupiah(totBersih);
+
+            document.getElementById('modal-rekap').style.display = 'flex';
+        }
+
+        function tutupRekapBulanan() {
+            document.getElementById('modal-rekap').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                if(localStorage.getItem('nsnet_darkmode') === 'true') {
+                    document.getElementById('body-main').classList.add('dark-mode');
+                }
+
+                var legacyV45 = localStorage.getItem('nsnet_rekapan_autosave_v45');
+                if (legacyV45 && !localStorage.getItem(getStorageKey(21, '10', '2026'))) {
+                    localStorage.setItem(getStorageKey(21, '10', '2026'), legacyV45);
+                }
+
+                var lastDate = localStorage.getItem('nsnet_last_active_date');
+                if (lastDate) {
+                    var parsed = JSON.parse(lastDate);
+                    tanggalAktif = parsed.tgl || 1;
+                    bulanAktif = parsed.bln || '10';
+                    tahunAktif = parsed.thn || '2026';
+                }
+            } catch (e) {}
+
+            var selBulan = document.getElementById('select-bulan');
+            var selTahun = document.getElementById('select-tahun');
+            if (selBulan) selBulan.value = bulanAktif;
+            if (selTahun) selTahun.value = tahunAktif;
+
+            muatDataTanggal(tanggalAktif, bulanAktif, tahunAktif);
+
+            var allInputs = document.querySelectorAll('input');
+            allInputs.forEach(function(input) {
+                input.addEventListener('input', autoSaveData);
+                input.addEventListener('change', autoSaveData);
+            });
+        });
+
+        window.addEventListener('beforeunload', function() {
+            autoSaveData();
+        });
+
+        function toggleDarkMode() {
+            var body = document.getElementById('body-main');
+            body.classList.toggle('dark-mode');
+            try {
+                localStorage.setItem('nsnet_darkmode', body.classList.contains('dark-mode'));
+            } catch (e) {}
+        }
+
+        function backupJSON() {
+            autoSaveData();
+            var allData = {};
+            try {
+                for (var i = 0; i < localStorage.length; i++) {
+                    var k = localStorage.key(i);
+                    if (k && k.indexOf('nsnet_rekapan_v46_') === 0) {
+                        allData[k] = JSON.parse(localStorage.getItem(k));
+                    }
+                }
+            } catch (e) {}
+            var blob = new Blob([JSON.stringify(allData, null, 2)], {type: 'application/json'});
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'backup_nsnet_all_tanggal_' + tahunAktif + '_' + bulanAktif + '.json';
+            a.click();
+            alert('✅ Backup JSON seluruh tanggal berhasil disimpan!');
+        }
+
+        function restoreJSON() {
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                var file = e.target.files[0];
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        var data = JSON.parse(event.target.result);
+                        var keys = Object.keys(data);
+                        if (keys.some(function(k) { return k.indexOf('nsnet_rekapan_v46_') === 0; })) {
+                            keys.forEach(function(k) {
+                                if (k.indexOf('nsnet_rekapan_v46_') === 0) {
+                                    localStorage.setItem(k, JSON.stringify(data[k]));
+                                }
+                            });
+                            muatDataTanggal(tanggalAktif, bulanAktif, tahunAktif);
+                            alert('✅ Seluruh data multi-tanggal berhasil direstore!');
+                        } else {
+                            var fields = document.querySelectorAll('.save-field');
+                            fields.forEach(function(field, index) {
+                                if (data['f_' + index] !== undefined) {
+                                    field.value = data['f_' + index];
+                                }
+                            });
+                            autoSaveData();
+                            alert('✅ Data berhasil direstore ke tanggal aktif!');
+                        }
+                    } catch(err) {
+                        alert('❌ Gagal membaca file JSON!');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function resetHariIni() {
+            if(confirm('Yakin ingin mengosongkan data khusus Tanggal ' + formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif) + '?')) {
+                var fields = document.querySelectorAll('.reset-target');
+                fields.forEach(function(field) { field.value = ''; });
+                try {
+                    localStorage.removeItem(getStorageKey(tanggalAktif, bulanAktif, tahunAktif));
+                } catch (e) {}
+                hitungUlang();
+                perbaruiTampilanNavigasi();
+                alert('Data tanggal ini berhasil dikosongkan.');
+            }
+        }
+
+        function exportCSV() {
+            var csv = [];
+            var rows = document.querySelectorAll(".excel-container tr");
+            rows.forEach(function(row) {
+                var cols = row.querySelectorAll("td, th");
+                var data = [];
+                cols.forEach(function(col) {
+                    var inp = col.querySelector("input");
+                    var text = inp ? inp.value : col.innerText;
+                    data.push('"' + text.replace(/"/g, '""') + '"');
+                });
+                csv.push(data.join(","));
+            });
+            var blob = new Blob([csv.join("\n")], { type: 'text/csv;charset=utf-8;' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'rekapan_nsnet_' + tahunAktif + '_' + bulanAktif + '_tgl_' + pad2(tanggalAktif) + '.csv';
+            a.click();
+            alert('File CSV tanggal ini berhasil di-export!');
+        }
+
+        function importCSV() {
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv';
+            input.onchange = function(e) {
+                var file = e.target.files[0];
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        alert('File CSV terbaca.');
+                    } catch(err) {
+                        alert('Gagal membaca file CSV!');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+    </script>
+</body>
+</html>
