@@ -279,7 +279,6 @@
             white-space: nowrap;
         }
         
-        /* Input Field Styling */
         td input {
             width: 100%;
             height: 100%;
@@ -298,7 +297,6 @@
             box-shadow: inset 0 0 0 2px #1a73e8;
         }
 
-        /* Calculated / Read-only Field Styling */
         .calculated {
             background-color: rgba(0, 0, 0, 0.05);
             font-weight: bold;
@@ -308,7 +306,6 @@
             user-select: none;
         }
         
-        /* Specific Section Colors */
         .header-main { font-weight: bold; font-size: 18px; height: 40px; line-height: 40px; }
         .taluduyunu { background-color: #92D050; color: #000; }
         .hulawa { background-color: #538DD5; color: #fff; }
@@ -320,7 +317,6 @@
         .row-data { background-color: #FDE9D9; }
         .grey-bg { background-color: #D9D9D9; font-weight: bold; }
 
-        /* --- WARNA-WARNI TABEL RINGKASAN & KEUANGAN --- */
         .bg-stok-head { background-color: #0ea5e9 !important; color: #fff !important; }
         .bg-stok-sub { background-color: #bae6fd !important; color: #0c4a6e !important; font-weight: bold; }
         
@@ -334,7 +330,6 @@
         .bg-v5k { background-color: #fef3c7 !important; color: #b45309 !important; font-weight: bold; }
         .bg-tot-row { background-color: #e2e8f0 !important; color: #0f172a !important; font-weight: bold; }
 
-        /* Warna-warni Tabel Keuangan & Titipan */
         .bg-titip-head { background-color: #8b5cf6 !important; color: #fff !important; }
         .bg-titip-sub { background-color: #ddd6fe !important; color: #4c1d95 !important; font-weight: bold; }
         .bg-titip-row { background-color: #f5f3ff !important; }
@@ -354,7 +349,6 @@
         .bg-bersih-lbl { background-color: #22c55e !important; color: #fff !important; font-weight: bold; }
         .bg-bersih-val { background-color: #dcfce7 !important; color: #14532d !important; }
 
-        /* Dark Mode Theme Classes - Refined Professional Palette */
         body.dark-mode { background-color: #0b0f17; color: #f8fafc; }
         body.dark-mode .excel-container { background-color: #131b2e; color: #f8fafc; border: 1px solid #334155; }
         body.dark-mode table { border-color: #334155; }
@@ -371,7 +365,6 @@
         body.dark-mode .bg-v5k { background-color: #b45309 !important; color: #fef3c7 !important; font-weight: bold; }
         body.dark-mode .bg-tot-row { background-color: #1e293b !important; color: #f8fafc !important; font-weight: bold; }
         
-        /* Refined financial badge colors in dark mode */
         body.dark-mode .bg-titip-head { background-color: #4f46e5 !important; color: #fff !important; }
         body.dark-mode .bg-bulanan-head { background-color: #2563eb !important; color: #fff !important; }
         body.dark-mode .bg-bulanan-val { background-color: #1e3a8a !important; color: #bfdbfe !important; font-weight: bold; }
@@ -398,7 +391,7 @@
             </div>
             <div class="nsnet-title">
                 <h1>NSNET BILLING</h1>
-                <span>SYSTEM CONTROL CENTER • REKAP HARIAN 1–31</span>
+                <span>SYSTEM CONTROL CENTER • REKAP HARIAN 1–31 (REALTIME)</span>
             </div>
         </div>
         <div class="nsnet-menu">
@@ -413,89 +406,18 @@
         </div>
     </div>
 
-    <!-- NAVIGASI TANGGAL RINGKAS (DROPDOWN TANGGAL, BULAN, TAHUN & BADGE AKTIF) -->
+    <!-- NAVIGASI TANGGAL RINGKAS -->
     <div class="date-nav-container">
         <div class="date-nav-top">
             <div class="date-controls">
                 <select id="select-tanggal" class="date-select" onchange="pindahTanggal(parseInt(this.value, 10))">
-                    <option value="1">Tanggal 01</option>
-                    <option value="2">Tanggal 02</option>
-                    <option value="3">Tanggal 03</option>
-                    <option value="4">Tanggal 04</option>
-                    <option value="5">Tanggal 05</option>
-                    <option value="6">Tanggal 06</option>
-                    <option value="7">Tanggal 07</option>
-                    <option value="8">Tanggal 08</option>
-                    <option value="9">Tanggal 09</option>
-                    <option value="10">Tanggal 10</option>
-                    <option value="11">Tanggal 11</option>
-                    <option value="12">Tanggal 12</option>
-                    <option value="13">Tanggal 13</option>
-                    <option value="14">Tanggal 14</option>
-                    <option value="15">Tanggal 15</option>
-                    <option value="16">Tanggal 16</option>
-                    <option value="17">Tanggal 17</option>
-                    <option value="18">Tanggal 18</option>
-                    <option value="19">Tanggal 19</option>
-                    <option value="20">Tanggal 20</option>
-                    <option value="21">Tanggal 21</option>
-                    <option value="22">Tanggal 22</option>
-                    <option value="23">Tanggal 23</option>
-                    <option value="24">Tanggal 24</option>
-                    <option value="25">Tanggal 25</option>
-                    <option value="26">Tanggal 26</option>
-                    <option value="27">Tanggal 27</option>
-                    <option value="28">Tanggal 28</option>
-                    <option value="29">Tanggal 29</option>
-                    <option value="30">Tanggal 30</option>
-                    <option value="31">Tanggal 31</option>
+                    <option value="1">Tanggal 01</option><option value="2">Tanggal 02</option><option value="3">Tanggal 03</option><option value="4">Tanggal 04</option><option value="5">Tanggal 05</option><option value="6">Tanggal 06</option><option value="7">Tanggal 07</option><option value="8">Tanggal 08</option><option value="9">Tanggal 09</option><option value="10">Tanggal 10</option><option value="11">Tanggal 11</option><option value="12">Tanggal 12</option><option value="13">Tanggal 13</option><option value="14">Tanggal 14</option><option value="15">Tanggal 15</option><option value="16">Tanggal 16</option><option value="17">Tanggal 17</option><option value="18">Tanggal 18</option><option value="19">Tanggal 19</option><option value="20">Tanggal 20</option><option value="21">Tanggal 21</option><option value="22">Tanggal 22</option><option value="23">Tanggal 23</option><option value="24">Tanggal 24</option><option value="25">Tanggal 25</option><option value="26">Tanggal 26</option><option value="27">Tanggal 27</option><option value="28">Tanggal 28</option><option value="29">Tanggal 29</option><option value="30">Tanggal 30</option><option value="31">Tanggal 31</option>
                 </select>
                 <select id="select-bulan" class="date-select" onchange="ubahBulanTahun()">
-                    <option value="01">Januari</option>
-                    <option value="02">Februari</option>
-                    <option value="03">Maret</option>
-                    <option value="04">April</option>
-                    <option value="05">Mei</option>
-                    <option value="06">Juni</option>
-                    <option value="07">Juli</option>
-                    <option value="08">Agustus</option>
-                    <option value="09">September</option>
-                    <option value="10" selected>Oktober</option>
-                    <option value="11">November</option>
-                    <option value="12">Desember</option>
+                    <option value="01">Januari</option><option value="02">Februari</option><option value="03">Maret</option><option value="04">April</option><option value="05">Mei</option><option value="06">Juni</option><option value="07">Juli</option><option value="08">Agustus</option><option value="09">September</option><option value="10" selected>Oktober</option><option value="11">November</option><option value="12">Desember</option>
                 </select>
                 <select id="select-tahun" class="date-select" onchange="ubahBulanTahun()">
-                    <option value="2020">2020</option>
-                    <option value="2021">2021</option>
-                    <option value="2022">2022</option>
-                    <option value="2023">2023</option>
-                    <option value="2024">2024</option>
-                    <option value="2025">2025</option>
-                    <option value="2026" selected>2026</option>
-                    <option value="2027">2027</option>
-                    <option value="2028">2028</option>
-                    <option value="2029">2029</option>
-                    <option value="2030">2030</option>
-                    <option value="2031">2031</option>
-                    <option value="2032">2032</option>
-                    <option value="2033">2033</option>
-                    <option value="2034">2034</option>
-                    <option value="2035">2035</option>
-                    <option value="2036">2036</option>
-                    <option value="2037">2037</option>
-                    <option value="2038">2038</option>
-                    <option value="2039">2039</option>
-                    <option value="2040">2040</option>
-                    <option value="2041">2041</option>
-                    <option value="2042">2042</option>
-                    <option value="2043">2043</option>
-                    <option value="2044">2044</option>
-                    <option value="2045">2045</option>
-                    <option value="2046">2046</option>
-                    <option value="2047">2047</option>
-                    <option value="2048">2048</option>
-                    <option value="2049">2049</option>
-                    <option value="2050">2050</option>
+                    <option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option>
                 </select>
             </div>
             <div class="active-date-badge">
@@ -504,7 +426,7 @@
         </div>
     </div>
 
-    <!-- MODAL REKAP BULANAN 1-31 -->
+    <!-- MODAL REKAP BULANAN -->
     <div class="modal-overlay" id="modal-rekap">
         <div class="modal-box">
             <div class="modal-header">
@@ -512,44 +434,22 @@
                 <button type="button" class="modal-close" onclick="tutupRekapBulanan()">✖ Tutup</button>
             </div>
             <div class="rekap-summary-cards">
-                <div class="rekap-card">
-                    <span>TOTAL VOUCHER 3.000 TERJUAL</span>
-                    <strong id="rek-v3k">0 pcs</strong>
-                </div>
-                <div class="rekap-card">
-                    <span>TOTAL VOUCHER 5.000 TERJUAL</span>
-                    <strong id="rek-v5k">0 pcs</strong>
-                </div>
-                <div class="rekap-card">
-                    <span>TOTAL PENDAPATAN KOTOR</span>
-                    <strong id="rek-kotor" style="color:#facc15;">Rp. 0</strong>
-                </div>
-                <div class="rekap-card">
-                    <span>TOTAL PENDAPATAN BERSIH</span>
-                    <strong id="rek-bersih" style="color:#4ade80;">Rp. 0</strong>
-                </div>
+                <div class="rekap-card"><span>TOTAL VOUCHER 3.000</span><strong id="rek-v3k">0 pcs</strong></div>
+                <div class="rekap-card"><span>TOTAL VOUCHER 5.000</span><strong id="rek-v5k">0 pcs</strong></div>
+                <div class="rekap-card"><span>PENDAPATAN KOTOR</span><strong id="rek-kotor" style="color:#facc15;">Rp. 0</strong></div>
+                <div class="rekap-card"><span>PENDAPATAN BERSIH</span><strong id="rek-bersih" style="color:#4ade80;">Rp. 0</strong></div>
             </div>
             <table class="rekap-table">
                 <thead>
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Terjual 3.000</th>
-                        <th>Terjual 5.000</th>
-                        <th>Bulanan</th>
-                        <th>Pendapatan Kotor</th>
-                        <th>Pengeluaran</th>
-                        <th>Pendapatan Bersih</th>
-                        <th>Aksi</th>
-                    </tr>
+                    <tr><th>Tanggal</th><th>Terjual 3.000</th><th>Terjual 5.000</th><th>Bulanan</th><th>Pendapatan Kotor</th><th>Pengeluaran</th><th>Pendapatan Bersih</th><th>Aksi</th></tr>
                 </thead>
                 <tbody id="rekap-table-body"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- REKAPAN EXCEL CONTAINER -->
+    <!-- EXCEL CONTAINER -->
     <div class="excel-container">
-        <!-- SCRIPT GENERATOR 5 TABEL WILAYAH -->
         <script>
             function renderTabelWilayah(id, namaWilayah, warnaClass) {
                 let html = `<table id="${id}">`;
@@ -557,19 +457,14 @@
                 html += `<tr class="tbl-sub">
                     <td style="width:45px; padding: 0 4px;">NO</td>
                     <td style="width:120px; padding: 0 6px;">VOUCHER</td>
-                    <td style="width:115px; padding: 0 6px; line-height: 1.2;">STOK VOUCHER</td>
-                    <td style="width:130px; padding: 0 6px; line-height: 1.2;">SISA STOK VOUCHER</td>
+                    <td style="width:115px; padding: 0 6px;">STOK VOUCHER</td>
+                    <td style="width:130px; padding: 0 6px;">SISA STOK VOUCHER</td>
                     <td colspan="10" style="padding: 0 6px;">ORDERAN VOUCHER</td>
                     <td style="width:140px; padding: 0 6px;">TOTAL PERKOLOM</td>
                     <td style="width:150px; padding: 0 6px;">TOTAL KESELURUHAN</td>
                 </tr>`;
 
-                let dataBaris = [
-                    { ket: "3000" },
-                    { ket: "5000" },
-                    { ket: "BULANAN" }
-                ];
-
+                let dataBaris = [{ ket: "3000" }, { ket: "5000" }, { ket: "BULANAN" }];
                 dataBaris.forEach((item, idx) => {
                     html += `<tr class="row-data">`;
                     if(idx === 0) {
@@ -594,7 +489,6 @@
                     }
                     html += `</tr>`;
                 });
-
                 html += `</table>`;
                 document.write(html);
             }
@@ -606,7 +500,7 @@
         <script>renderTabelWilayah('tbl-balayo', 'BALAYO', 'balayo');</script>
         <script>renderTabelWilayah('tbl-paguat', 'PAGUAT', 'paguat');</script>
 
-        <!-- TOTAL KESELURUHAN STOK & VOUCHER TERJUAL -->
+        <!-- TOTAL KESELURUHAN -->
         <table>
             <tr>
                 <td colspan="5" class="bg-stok-head" style="font-weight:bold;">TOTAL SELURUH STOK VOUCHER</td>
@@ -636,7 +530,7 @@
             </tr>
         </table>
 
-        <!-- VOUCHER TITIPAN, PENDAPATAN & EXPENSES -->
+        <!-- KEUANGAN & TITIPAN -->
         <table id="tbl-keuangan">
             <tr>
                 <td colspan="5" class="bg-titip-head" style="font-weight:bold;">VOUCHER TITIPAN / SETORAN BULANAN PELANGGAN</td>
@@ -644,89 +538,34 @@
                 <td colspan="6" class="bg-voucher-head" style="font-weight:bold;">RINGKASAN KEUANGAN & PENDAPATAN</td>
             </tr>
             <tr>
-                <td colspan="3" class="bg-titip-sub">N A M A</td><td colspan="1" class="bg-titip-sub">VOUCHER 3.000 / BULANAN 50.000</td><td colspan="1" class="bg-titip-sub">VOUCHER 5.000 / BULANAN 75.000</td>
+                <td colspan="3" class="bg-titip-sub">N A M A</td><td colspan="1" class="bg-titip-sub">V 3K / 50K</td><td colspan="1" class="bg-titip-sub">V 5K / 75K</td>
                 <td colspan="6" rowspan="2" class="calculated bg-bulanan-val" id="tot-pendapatan-bulanan" style="font-size:16px; font-weight:bold;">Rp. 0</td>
-                <td colspan="3" class="bg-v3k" style="width: 120px; text-align: center; border-right: 2px solid #595959; font-size: 12px;">VOUCHER - 3.000</td><td colspan="3" class="calculated bg-voucher-val" id="tot-penjualan-3000" style="width: 120px; text-align: center; font-size: 14px;">0</td>
+                <td colspan="3" class="bg-v3k" style="font-size: 12px;">VOUCHER - 3.000</td><td colspan="3" class="calculated bg-voucher-val" id="tot-penjualan-3000" style="font-size: 14px;">0</td>
             </tr>
             <tr>
                 <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 1" class="save-field reset-target"></td>
                 <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
                 <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="3" class="bg-v5k" style="width: 120px; text-align: center; border-right: 2px solid #595959; font-size: 12px;">VOUCHER - 5.000</td><td colspan="3" class="calculated bg-voucher-val" id="tot-penjualan-5000" style="width: 120px; text-align: center; font-size: 14px;">0</td>
+                <td colspan="3" class="bg-v5k" style="font-size: 12px;">VOUCHER - 5.000</td><td colspan="3" class="calculated bg-voucher-val" id="tot-penjualan-5000" style="font-size: 14px;">0</td>
             </tr>
+            <!-- Baris Titipan 2 - 12 -->
+            <script>
+                for(let i=2; i<=12; i++) {
+                    document.write(`<tr>
+                        <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan ${i}" class="save-field reset-target"></td>
+                        <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
+                        <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                        ${i===2?'<td colspan="6" class="bg-voucher-head">TOTAL PENDAPATAN VOUCHER</td><td colspan="6" class="calculated bg-voucher-val" id="tot-pendapatan-voucher-gabung" style="font-size:15px; font-weight:bold;">Rp. 0</td>':''}
+                        ${i===3?'<td colspan="6" class="bg-kotor-lbl">TOTAL PENDAPATAN KOTOR</td><td colspan="6" class="calculated bg-kotor-val" id="tot-pendapatan-kotor" style="font-size:15px; font-weight:bold;">Rp. 0</td>':''}
+                        ${i===4?'<td colspan="6" class="bg-expense-lbl">TOTAL PENGELUARAN TEKNISI</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
+                        ${i===5?'<td colspan="6" class="bg-expense-lbl">TOTAL PENGELUARAN ADMIN</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-admin" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
+                        ${i===6?'<td colspan="6" class="bg-expense-lbl">TOTAL GAJI TEKNISI</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="gaji-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
+                        ${i>=7?'<td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>':''}
+                    </tr>`);
+                }
+            </script>
             <tr>
-                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 2" class="save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="6" class="bg-voucher-head">TOTAL PENDAPATAN VOUCHER</td>
-                <td colspan="6" class="calculated bg-voucher-val" id="tot-pendapatan-voucher-gabung" style="font-size:15px; font-weight:bold;">Rp. 0</td>
-            </tr>
-            <tr>
-                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 3" class="save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="6" class="bg-kotor-lbl">TOTAL PENDAPATAN KOTOR</td>
-                <td colspan="6" class="calculated bg-kotor-val" id="tot-pendapatan-kotor" style="font-size:15px; font-weight:bold;">Rp. 0</td>
-            </tr>
-            <tr>
-                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 4" class="save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="6" class="bg-expense-lbl">TOTAL PENGELUARAN TEKNISI</td>
-                <td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>
-            </tr>
-            <tr>
-                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 5" class="save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="6" class="bg-expense-lbl">TOTAL PENGELUARAN ADMIN</td>
-                <td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-admin" class="save-field reset-target" placeholder="Rp. 0"></td>
-            </tr>
-            <tr>
-                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 6" class="save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="6" class="bg-expense-lbl">TOTAL GAJI TEKNISI</td>
-                <td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="gaji-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>
-            </tr>
-            <tr>
-                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 7" class="save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>
-            </tr>
-            <tr>
-                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 8" class="save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>
-            </tr>
-            <tr>
-                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 9" class="save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>
-            </tr>
-            <tr>
-                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 10" class="save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>
-            </tr>
-            <tr>
-                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 11" class="save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>
-            </tr>
-            <tr>
-                <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 12" class="save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>
-            </tr>
-            <tr>
-                <td colspan="3" class="bg-titip-head" style="font-weight:bold;">TOTAL TITIPAN DAN  BULANAN</td>
+                <td colspan="3" class="bg-titip-head" style="font-weight:bold;">TOTAL TITIPAN DAN BULANAN</td>
                 <td colspan="1" class="calculated bg-titip-sub" id="tot-titipan-3k">0</td>
                 <td colspan="1" class="calculated bg-titip-sub" id="tot-titipan-5k">0</td>
                 <td colspan="6" class="bg-bersih-lbl" style="font-size:15px; font-weight:bold;">TOTAL PENDAPATAN BERSIH</td>
@@ -735,11 +574,32 @@
         </table>
     </div>
 
-    <!-- SCRIPT FUNGSI OTOMATIS & MANAJEMEN PERTANGGAL 1-31 -->
+    <!-- FIREBASE SDK & SKRIP UTAMA -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
     <script>
+        // Konfigurasi Firebase Realtime Database Abang
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmq5KhbMo9a7qrN4ty-834nOFzMg3CjoY",
+            authDomain: "list-voucher-harian.firebaseapp.com",
+            databaseURL: "https://list-voucher-harian-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "list-voucher-harian",
+            storageBucket: "list-voucher-harian.firebasestorage.app",
+            messagingSenderId: "49324215317",
+            appId: "1:49324215317:web:c697e67bb88fb7e987921c",
+            measurementId: "G-WP5MSK0FHP"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
         var tanggalAktif = 1;
         var bulanAktif = '10';
         var tahunAktif = '2026';
+        var isRemoteUpdating = false; // Mencegah loop infinite sync
 
         function formatRupiah(angka) {
             return 'Rp. ' + Number(angka || 0).toLocaleString('id-ID');
@@ -774,14 +634,12 @@
         function perbaruiTampilanNavigasi() {
             var selTgl = document.getElementById('select-tanggal');
             if (selTgl) selTgl.value = String(tanggalAktif);
-
             var lblAktif = document.getElementById('label-tanggal-aktif');
             if (lblAktif) lblAktif.innerText = formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif);
         }
 
         function hitungUlang() {
             var tabelIds = ['tbl-taluduyunu', 'tbl-hulawa', 'tbl-buntulia', 'tbl-balayo', 'tbl-paguat'];
-            
             var totStok3k = 0, totStok5k = 0;
             var totSisa3k = 0, totSisa5k = 0;
             var totJual3k = 0, totJual5k = 0;
@@ -791,7 +649,6 @@
                 var tbl = document.getElementById(id);
                 if (!tbl) return;
                 var rows = tbl.querySelectorAll('tr.row-data');
-
                 var totalWilayah = 0;
 
                 rows.forEach(function(row) {
@@ -809,22 +666,12 @@
 
                     var sisaCell = row.querySelector('.sisa');
                     if (ket === 'BULANAN') {
-                        if (sisaCell) {
-                            sisaCell.innerText = '-';
-                            sisaCell.style.color = '';
-                            sisaCell.style.fontWeight = 'bold';
-                        }
+                        if (sisaCell) { sisaCell.innerText = '-'; }
                     } else {
                         var sisaVal = stokVal - sumOrd;
                         if (sisaCell) {
                             sisaCell.innerText = sisaVal;
-                            if (sisaVal < 0) {
-                                sisaCell.style.color = '#dc2626';
-                                sisaCell.style.fontWeight = 'bold';
-                            } else {
-                                sisaCell.style.color = '';
-                                sisaCell.style.fontWeight = 'bold';
-                            }
+                            sisaCell.style.color = sisaVal < 0 ? '#dc2626' : '';
                         }
                     }
 
@@ -832,22 +679,16 @@
                     var totKolomVal = 0;
                     if (ket === '3000') {
                         totKolomVal = sumOrd * 2000;
-                        totStok3k += stokVal;
-                        totSisa3k += sisaVal;
-                        totJual3k += sumOrd;
+                        totStok3k += stokVal; totSisa3k += sisaVal; totJual3k += sumOrd;
                     } else if (ket === '5000') {
                         totKolomVal = sumOrd * 4000;
-                        totStok5k += stokVal;
-                        totSisa5k += sisaVal;
-                        totJual5k += sumOrd;
+                        totStok5k += stokVal; totSisa5k += sisaVal; totJual5k += sumOrd;
                     } else if (ket === 'BULANAN') {
                         totKolomVal = sumOrd * 1000;
                         totalPendapatanBulananSum += (sumOrd * 1000);
                     }
 
-                    if (totKolomCell) {
-                        totKolomCell.innerText = formatRupiah(totKolomVal);
-                    }
+                    if (totKolomCell) { totKolomCell.innerText = formatRupiah(totKolomVal); }
                     totalWilayah += totKolomVal;
                 });
 
@@ -868,7 +709,6 @@
             document.getElementById('grand-jual').innerText = totJual3k + totJual5k;
 
             document.getElementById('tot-pendapatan-bulanan').innerText = formatRupiah(totalPendapatanBulananSum);
-            
             document.getElementById('tot-penjualan-3000').innerText = totJual3k;
             document.getElementById('tot-penjualan-5000').innerText = totJual5k;
 
@@ -895,43 +735,60 @@
             document.getElementById('tot-titipan-5k').innerText = sumTitip5k;
 
             return {
-                jual3k: totJual3k,
-                jual5k: totJual5k,
-                bulanan: totalPendapatanBulananSum,
-                kotor: angkaKotor,
-                pengeluaran: totalPengeluaran,
-                bersih: totBersih
+                jual3k: totJual3k, jual5k: totJual5k, bulanan: totalPendapatanBulananSum,
+                kotor: angkaKotor, pengeluaran: totalPengeluaran, bersih: totBersih
             };
         }
 
+        // Sinkronisasi ke Firebase Realtime Database
         function autoSaveData() {
+            if (isRemoteUpdating) return; // Cegah loop
             var summary = hitungUlang();
             var fields = document.querySelectorAll('.save-field');
             var data = { meta_summary: summary };
             fields.forEach(function(field, index) {
                 data['f_' + index] = field.value;
             });
+            
+            var storageKey = getStorageKey(tanggalAktif, bulanAktif, tahunAktif);
             try {
-                localStorage.setItem(getStorageKey(tanggalAktif, bulanAktif, tahunAktif), JSON.stringify(data));
+                localStorage.setItem(storageKey, JSON.stringify(data));
                 localStorage.setItem('nsnet_last_active_date', JSON.stringify({ tgl: tanggalAktif, bln: bulanAktif, thn: tahunAktif }));
+                
+                // Kirim ke Firebase Realtime Database
+                var cleanKey = storageKey.replace(/\./g, '_');
+                db.ref('rekapan_harian/' + cleanKey).set(data);
             } catch (e) {
-                console.warn('Gagal auto-save:', e);
+                console.warn('Gagal simpan:', e);
             }
             perbaruiTampilanNavigasi();
         }
 
-        function muatDataTanggal(tgl, bln, thn) {
-            var saved = null;
-            try {
-                saved = localStorage.getItem(getStorageKey(tgl, bln, thn));
-            } catch (e) {}
-
+        function muatDataLocalDanRemote(tgl, bln, thn) {
+            var storageKey = getStorageKey(tgl, bln, thn);
+            var cleanKey = storageKey.replace(/\./g, '_');
             var fields = document.querySelectorAll('.save-field');
             var defaultTglStr = formatTanggalLengkap(tgl, bln, thn);
 
-            if (saved) {
+            // Ambil dari LocalStorage dulu agar instan
+            var saved = localStorage.getItem(storageKey);
+            terapkanDataKeForm(saved, fields, defaultTglStr);
+
+            // Ambil data terbaru secara real-time dari Firebase
+            db.ref('rekapan_harian/' + cleanKey).once('value').then(function(snapshot) {
+                var remoteData = snapshot.val();
+                if (remoteData) {
+                    localStorage.setItem(storageKey, JSON.stringify(remoteData));
+                    terapkanDataKeForm(JSON.stringify(remoteData), fields, defaultTglStr);
+                }
+            });
+        }
+
+        function terapkanDataKeForm(rawJson, fields, defaultTglStr) {
+            isRemoteUpdating = true;
+            if (rawJson) {
                 try {
-                    var data = JSON.parse(saved);
+                    var data = JSON.parse(rawJson);
                     fields.forEach(function(field, index) {
                         if (data['f_' + index] !== undefined) {
                             field.value = data['f_' + index];
@@ -939,20 +796,32 @@
                             field.value = field.classList.contains('tgl-input') ? defaultTglStr : '';
                         }
                     });
-                } catch (e) {
-                    console.warn('Gagal memuat data:', e);
-                }
+                } catch (e) {}
             } else {
                 fields.forEach(function(field) {
-                    if (field.classList.contains('tgl-input')) {
-                        field.value = defaultTglStr;
-                    } else {
-                        field.value = '';
-                    }
+                    field.value = field.classList.contains('tgl-input') ? defaultTglStr : '';
                 });
             }
             hitungUlang();
             perbaruiTampilanNavigasi();
+            isRemoteUpdating = false;
+        }
+
+        // Listener Realtime Firebase saat ada perubahan dari device lain
+        function setupRealtimeListener() {
+            var storageKey = getStorageKey(tanggalAktif, bulanAktif, tahunAktif);
+            var cleanKey = storageKey.replace(/\./g, '_');
+            
+            db.ref('rekapan_harian/' + cleanKey).on('value', function(snapshot) {
+                if (isRemoteUpdating) return;
+                var remoteData = snapshot.val();
+                if (remoteData) {
+                    localStorage.setItem(storageKey, JSON.stringify(remoteData));
+                    var fields = document.querySelectorAll('.save-field');
+                    var defaultTglStr = formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif);
+                    terapkanDataKeForm(JSON.stringify(remoteData), fields, defaultTglStr);
+                }
+            });
         }
 
         function pindahTanggal(tglBaru) {
@@ -960,20 +829,22 @@
             if (isNaN(tglBaru) || tglBaru < 1 || tglBaru > 31) return;
             autoSaveData();
             tanggalAktif = tglBaru;
-            muatDataTanggal(tanggalAktif, bulanAktif, tahunAktif);
+            setupRealtimeListener();
+            muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
         }
 
         function ubahBulanTahun() {
             autoSaveData();
             bulanAktif = document.getElementById('select-bulan').value;
             tahunAktif = document.getElementById('select-tahun').value;
-            muatDataTanggal(tanggalAktif, bulanAktif, tahunAktif);
+            setupRealtimeListener();
+            muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
         }
 
         function simpanDataManual() {
             autoSaveData();
             var waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            alert('✅ Data Tanggal ' + formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif) + ' berhasil disimpan (Pukul ' + waktu + ').');
+            alert('✅ Data Tanggal ' + formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif) + ' berhasil disinkronkan ke Firebase (Pukul ' + waktu + ').');
         }
 
         function bukaRekapBulanan() {
@@ -985,9 +856,7 @@
             var tot3k = 0, tot5k = 0, totKotor = 0, totBersih = 0;
             var tbody = document.getElementById('rekap-table-body');
             tbody.innerHTML = '';
-
-            var sumBulanan = 0;
-            var sumPengeluaran = 0;
+            var sumBulanan = 0, sumPengeluaran = 0;
 
             for (var d = 1; d <= 31; d++) {
                 var raw = null;
@@ -1025,7 +894,6 @@
                 tbody.appendChild(tr);
             }
 
-            // Tambahkan baris TOTAL KESELURUHAN di bawah tanggal 31
             var trTot = document.createElement('tr');
             trTot.style.background = '#0f172a';
             trTot.style.borderTop = '3px solid #38bdf8';
@@ -1057,12 +925,6 @@
                 if(localStorage.getItem('nsnet_darkmode') === 'true') {
                     document.getElementById('body-main').classList.add('dark-mode');
                 }
-
-                var legacyV45 = localStorage.getItem('nsnet_rekapan_autosave_v45');
-                if (legacyV45 && !localStorage.getItem(getStorageKey(21, '10', '2026'))) {
-                    localStorage.setItem(getStorageKey(21, '10', '2026'), legacyV45);
-                }
-
                 var lastDate = localStorage.getItem('nsnet_last_active_date');
                 if (lastDate) {
                     var parsed = JSON.parse(lastDate);
@@ -1077,7 +939,8 @@
             if (selBulan) selBulan.value = bulanAktif;
             if (selTahun) selTahun.value = tahunAktif;
 
-            muatDataTanggal(tanggalAktif, bulanAktif, tahunAktif);
+            setupRealtimeListener();
+            muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
 
             var allInputs = document.querySelectorAll('input');
             allInputs.forEach(function(input) {
@@ -1086,16 +949,10 @@
             });
         });
 
-        window.addEventListener('beforeunload', function() {
-            autoSaveData();
-        });
-
         function toggleDarkMode() {
             var body = document.getElementById('body-main');
             body.classList.toggle('dark-mode');
-            try {
-                localStorage.setItem('nsnet_darkmode', body.classList.contains('dark-mode'));
-            } catch (e) {}
+            try { localStorage.setItem('nsnet_darkmode', body.classList.contains('dark-mode')); } catch (e) {}
         }
 
         function backupJSON() {
@@ -1115,7 +972,7 @@
             a.href = url;
             a.download = 'backup_nsnet_all_tanggal_' + tahunAktif + '_' + bulanAktif + '.json';
             a.click();
-            alert('✅ Backup JSON seluruh tanggal berhasil disimpan!');
+            alert('✅ Backup JSON berhasil!');
         }
 
         function restoreJSON() {
@@ -1129,24 +986,14 @@
                     try {
                         var data = JSON.parse(event.target.result);
                         var keys = Object.keys(data);
-                        if (keys.some(function(k) { return k.indexOf('nsnet_rekapan_v46_') === 0; })) {
-                            keys.forEach(function(k) {
-                                if (k.indexOf('nsnet_rekapan_v46_') === 0) {
-                                    localStorage.setItem(k, JSON.stringify(data[k]));
-                                }
-                            });
-                            muatDataTanggal(tanggalAktif, bulanAktif, tahunAktif);
-                            alert('✅ Seluruh data multi-tanggal berhasil direstore!');
-                        } else {
-                            var fields = document.querySelectorAll('.save-field');
-                            fields.forEach(function(field, index) {
-                                if (data['f_' + index] !== undefined) {
-                                    field.value = data['f_' + index];
-                                }
-                            });
-                            autoSaveData();
-                            alert('✅ Data berhasil direstore ke tanggal aktif!');
-                        }
+                        keys.forEach(function(k) {
+                            if (k.indexOf('nsnet_rekapan_v46_') === 0) {
+                                localStorage.setItem(k, JSON.stringify(data[k]));
+                                db.ref('rekapan_harian/' + k.replace(/\./g, '_')).set(data[k]);
+                            }
+                        });
+                        muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
+                        alert('✅ Data berhasil direstore dan disinkronkan ke Firebase!');
                     } catch(err) {
                         alert('❌ Gagal membaca file JSON!');
                     }
@@ -1157,11 +1004,13 @@
         }
 
         function resetHariIni() {
-            if(confirm('Yakin ingin mengosongkan data khusus Tanggal ' + formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif) + '?')) {
+            if(confirm('Yakin ingin mengosongkan data Tanggal ' + formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif) + '?')) {
                 var fields = document.querySelectorAll('.reset-target');
                 fields.forEach(function(field) { field.value = ''; });
+                var storageKey = getStorageKey(tanggalAktif, bulanAktif, tahunAktif);
                 try {
-                    localStorage.removeItem(getStorageKey(tanggalAktif, bulanAktif, tahunAktif));
+                    localStorage.removeItem(storageKey);
+                    db.ref('rekapan_harian/' + storageKey.replace(/\./g, '_')).remove();
                 } catch (e) {}
                 hitungUlang();
                 perbaruiTampilanNavigasi();
@@ -1188,27 +1037,9 @@
             a.href = url;
             a.download = 'rekapan_nsnet_' + tahunAktif + '_' + bulanAktif + '_tgl_' + pad2(tanggalAktif) + '.csv';
             a.click();
-            alert('File CSV tanggal ini berhasil di-export!');
         }
 
-        function importCSV() {
-            var input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.csv';
-            input.onchange = function(e) {
-                var file = e.target.files[0];
-                var reader = new FileReader();
-                reader.onload = function(event) {
-                    try {
-                        alert('File CSV terbaca.');
-                    } catch(err) {
-                        alert('Gagal membaca file CSV!');
-                    }
-                };
-                reader.readAsText(file);
-            };
-            input.click();
-        }
+        function importCSV() { alert('Fitur Import CSV.'); }
     </script>
 </body>
 </html>
