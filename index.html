@@ -814,7 +814,7 @@
         }
 
         function terapkanDataKeForm(rawJson, fields, defaultTglStr) {
-            isRemoteUpdating = true;
+            isRemoteUpdating = true; // Kunci agar auto-save tidak memicu simpan balik ke server
             if (rawJson) {
                 try {
                     var data = JSON.parse(rawJson);
@@ -833,13 +833,16 @@
             }
             hitungUlang();
             perbaruiTampilanNavigasi();
-            isRemoteUpdating = false;
+            isRemoteUpdating = false; // Buka kembali kunci setelah selesai
         }
 
         function setupRealtimeListener() {
             var storageKey = getStorageKey(tanggalAktif, bulanAktif, tahunAktif);
             var cleanKey = storageKey.replace(/\./g, '_');
             
+            // Matikan semua listener lama agar tidak menumpuk saat pindah tanggal
+            db.ref('rekapan_harian/').off();
+
             db.ref('rekapan_harian/' + cleanKey).on('value', function(snapshot) {
                 if (isRemoteUpdating) return;
                 var remoteData = snapshot.val();
