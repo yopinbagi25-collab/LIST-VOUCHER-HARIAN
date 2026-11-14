@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NSNET BILLING - REKAPAN VOUCHER INTERAKTIF (PERTANGGAL 1-31)</title>
     <style>
         * {
@@ -252,7 +253,7 @@
             text-align: center;
         }
 
-        /* --- STYLING EXCEL CONTAINER --- */
+        /* --- STYLING EXCEL CONTAINER (RESPONSIF & SMOOTH SCROLL) --- */
         .excel-container {
             background-color: #fff;
             padding: 20px;
@@ -260,12 +261,14 @@
             max-width: 1650px;
             margin: 0 auto;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             color: #000;
             border-radius: 8px;
         }
         table {
             border-collapse: collapse;
             width: 100%;
+            min-width: 1250px;
             margin: 0 auto 25px auto;
             font-size: 14px;
             font-weight: bold;
@@ -275,7 +278,7 @@
             padding: 0;
             text-align: center;
             vertical-align: middle;
-            height: 42px;
+            height: 44px;
             white-space: nowrap;
         }
         
@@ -287,14 +290,41 @@
             background: transparent;
             text-align: center;
             font-family: inherit;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
             color: #000;
-            padding: 2px 2px;
+            padding: 2px 4px;
         }
         td input:focus {
             background-color: #e8f0fe !important;
             box-shadow: inset 0 0 0 2px #1a73e8;
+        }
+
+        /* Lebar khusus kolom orderan agar tidak kepotong */
+        .col-orderan {
+            min-width: 75px;
+            width: 75px;
+        }
+
+        /* Penyesuaian khusus layar HP */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            .excel-container {
+                padding: 10px;
+            }
+            .col-orderan {
+                min-width: 82px;
+                width: 82px;
+            }
+            td input.ord {
+                font-size: 16px !important;
+                padding: 0 6px;
+            }
+            th, td {
+                height: 46px;
+            }
         }
 
         .calculated {
@@ -480,7 +510,7 @@
                     html += `<td class="calculated sisa">0</td>`;
                     
                     for(let c=0; c<10; c++) {
-                        html += `<td style="width:65px; height:42px;"><input type="text" inputmode="numeric" value="" class="ord save-field reset-target" style="font-size:15px; font-weight:bold;"></td>`;
+                        html += `<td class="col-orderan"><input type="text" inputmode="numeric" value="" class="ord save-field reset-target" style="font-size:15px; font-weight:bold;"></td>`;
                     }
 
                     html += `<td class="calculated tot-kolom">Rp. 0</td>`;
@@ -530,23 +560,27 @@
             </tr>
         </table>
 
-        <!-- KEUANGAN & TITIPAN -->
+        <!-- KEUANGAN & TITIPAN (DIOPTIMALKAN LEBAR KOLOMNYA) -->
         <table id="tbl-keuangan">
             <tr>
                 <td colspan="5" class="bg-titip-head" style="font-weight:bold;">VOUCHER TITIPAN / SETORAN BULANAN PELANGGAN</td>
-                <td colspan="6" class="bg-bulanan-head" style="font-weight:bold;">TOTAL PENDAPATAN BULANAN</td>
-                <td colspan="6" class="bg-voucher-head" style="font-weight:bold;">RINGKASAN KEUANGAN & PENDAPATAN</td>
+                <td colspan="5" class="bg-bulanan-head" style="font-weight:bold;">TOTAL PENDAPATAN BULANAN</td>
+                <td colspan="7" class="bg-voucher-head" style="font-weight:bold;">RINGKASAN KEUANGAN & PENDAPATAN</td>
             </tr>
             <tr>
-                <td colspan="3" class="bg-titip-sub">N A M A</td><td colspan="1" class="bg-titip-sub">V 3K / 50K</td><td colspan="1" class="bg-titip-sub">V 5K / 75K</td>
-                <td colspan="6" rowspan="2" class="calculated bg-bulanan-val" id="tot-pendapatan-bulanan" style="font-size:16px; font-weight:bold;">Rp. 0</td>
-                <td colspan="3" class="bg-v3k" style="font-size: 12px;">VOUCHER - 3.000</td><td colspan="3" class="calculated bg-voucher-val" id="tot-penjualan-3000" style="font-size: 14px;">0</td>
+                <td colspan="3" class="bg-titip-sub">N A M A</td>
+                <td colspan="1" class="bg-titip-sub">V 3K / 50K</td>
+                <td colspan="1" class="bg-titip-sub">V 5K / 75K</td>
+                <td colspan="5" rowspan="2" class="calculated bg-bulanan-val" id="tot-pendapatan-bulanan" style="font-size:16px; font-weight:bold;">Rp. 0</td>
+                <td colspan="3" class="bg-v3k" style="font-size: 12px; text-align: center;">VOUCHER - 3.000</td>
+                <td colspan="4" class="calculated bg-voucher-val" id="tot-penjualan-3000" style="font-size: 14px; text-align: center;">0</td>
             </tr>
             <tr>
                 <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 1" class="save-field reset-target"></td>
                 <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
                 <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="3" class="bg-v5k" style="font-size: 12px;">VOUCHER - 5.000</td><td colspan="3" class="calculated bg-voucher-val" id="tot-penjualan-5000" style="font-size: 14px;">0</td>
+                <td colspan="3" class="bg-v5k" style="font-size: 12px; text-align: center;">VOUCHER - 5.000</td>
+                <td colspan="4" class="calculated bg-voucher-val" id="tot-penjualan-5000" style="font-size: 14px; text-align: center;">0</td>
             </tr>
             <!-- Baris Titipan 2 - 12 -->
             <script>
@@ -555,12 +589,12 @@
                         <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan ${i}" class="save-field reset-target"></td>
                         <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
                         <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                        ${i===2?'<td colspan="6" class="bg-voucher-head">TOTAL PENDAPATAN VOUCHER</td><td colspan="6" class="calculated bg-voucher-val" id="tot-pendapatan-voucher-gabung" style="font-size:15px; font-weight:bold;">Rp. 0</td>':''}
-                        ${i===3?'<td colspan="6" class="bg-kotor-lbl">TOTAL PENDAPATAN KOTOR</td><td colspan="6" class="calculated bg-kotor-val" id="tot-pendapatan-kotor" style="font-size:15px; font-weight:bold;">Rp. 0</td>':''}
-                        ${i===4?'<td colspan="6" class="bg-expense-lbl">TOTAL PENGELUARAN TEKNISI</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
-                        ${i===5?'<td colspan="6" class="bg-expense-lbl">TOTAL PENGELUARAN ADMIN</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-admin" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
-                        ${i===6?'<td colspan="6" class="bg-expense-lbl">TOTAL GAJI TEKNISI</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="gaji-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
-                        ${i>=7?'<td colspan="6" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>':''}
+                        ${i===2?'<td colspan="5" class="bg-voucher-head">TOTAL PENDAPATAN VOUCHER</td><td colspan="7" class="calculated bg-voucher-val" id="tot-pendapatan-voucher-gabung" style="font-size:15px; font-weight:bold;">Rp. 0</td>':''}
+                        ${i===3?'<td colspan="5" class="bg-kotor-lbl">TOTAL PENDAPATAN KOTOR</td><td colspan="7" class="calculated bg-kotor-val" id="tot-pendapatan-kotor" style="font-size:15px; font-weight:bold;">Rp. 0</td>':''}
+                        ${i===4?'<td colspan="5" class="bg-expense-lbl">TOTAL PENGELUARAN TEKNISI</td><td colspan="7" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
+                        ${i===5?'<td colspan="5" class="bg-expense-lbl">TOTAL PENGELUARAN ADMIN</td><td colspan="7" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-admin" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
+                        ${i===6?'<td colspan="5" class="bg-expense-lbl">TOTAL GAJI TEKNISI</td><td colspan="7" class="bg-expense-inp"><input type="text" inputmode="numeric" id="gaji-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
+                        ${i>=7?'<td colspan="5" class="bg-tot-row"></td><td colspan="7" class="bg-tot-row"></td>':''}
                     </tr>`);
                 }
             </script>
@@ -568,8 +602,8 @@
                 <td colspan="3" class="bg-titip-head" style="font-weight:bold;">TOTAL TITIPAN DAN BULANAN</td>
                 <td colspan="1" class="calculated bg-titip-sub" id="tot-titipan-3k">0</td>
                 <td colspan="1" class="calculated bg-titip-sub" id="tot-titipan-5k">0</td>
-                <td colspan="6" class="bg-bersih-lbl" style="font-size:15px; font-weight:bold;">TOTAL PENDAPATAN BERSIH</td>
-                <td colspan="6" class="calculated bg-bersih-val" id="tot-pendapatan-bersih" style="font-size:16px; font-weight:bold;">Rp. 0</td>
+                <td colspan="5" class="bg-bersih-lbl" style="font-size:15px; font-weight:bold;">TOTAL PENDAPATAN BERSIH</td>
+                <td colspan="7" class="calculated bg-bersih-val" id="tot-pendapatan-bersih" style="font-size:16px; font-weight:bold;">Rp. 0</td>
             </tr>
         </table>
     </div>
@@ -579,7 +613,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
-        // Konfigurasi Firebase Realtime Database Abang
         const firebaseConfig = {
             apiKey: "AIzaSyBmq5KhbMo9a7qrN4ty-834nOFzMg3CjoY",
             authDomain: "list-voucher-harian.firebaseapp.com",
@@ -599,7 +632,7 @@
         var tanggalAktif = 1;
         var bulanAktif = '10';
         var tahunAktif = '2026';
-        var isRemoteUpdating = false; // Mencegah loop infinite sync
+        var isRemoteUpdating = false;
 
         function formatRupiah(angka) {
             return 'Rp. ' + Number(angka || 0).toLocaleString('id-ID');
@@ -740,9 +773,8 @@
             };
         }
 
-        // Sinkronisasi ke Firebase Realtime Database
         function autoSaveData() {
-            if (isRemoteUpdating) return; // Cegah loop
+            if (isRemoteUpdating) return;
             var summary = hitungUlang();
             var fields = document.querySelectorAll('.save-field');
             var data = { meta_summary: summary };
@@ -755,7 +787,6 @@
                 localStorage.setItem(storageKey, JSON.stringify(data));
                 localStorage.setItem('nsnet_last_active_date', JSON.stringify({ tgl: tanggalAktif, bln: bulanAktif, thn: tahunAktif }));
                 
-                // Kirim ke Firebase Realtime Database
                 var cleanKey = storageKey.replace(/\./g, '_');
                 db.ref('rekapan_harian/' + cleanKey).set(data);
             } catch (e) {
@@ -770,11 +801,9 @@
             var fields = document.querySelectorAll('.save-field');
             var defaultTglStr = formatTanggalLengkap(tgl, bln, thn);
 
-            // Ambil dari LocalStorage dulu agar instan
             var saved = localStorage.getItem(storageKey);
             terapkanDataKeForm(saved, fields, defaultTglStr);
 
-            // Ambil data terbaru secara real-time dari Firebase
             db.ref('rekapan_harian/' + cleanKey).once('value').then(function(snapshot) {
                 var remoteData = snapshot.val();
                 if (remoteData) {
@@ -807,7 +836,6 @@
             isRemoteUpdating = false;
         }
 
-        // Listener Realtime Firebase saat ada perubahan dari device lain
         function setupRealtimeListener() {
             var storageKey = getStorageKey(tanggalAktif, bulanAktif, tahunAktif);
             var cleanKey = storageKey.replace(/\./g, '_');
