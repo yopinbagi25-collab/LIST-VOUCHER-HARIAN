@@ -267,8 +267,10 @@
         }
         table {
             border-collapse: collapse;
-            width: 100%;
-            min-width: 1250px;
+            table-layout: fixed;
+            width: 1450px;
+            min-width: 1450px;
+            max-width: 1450px;
             margin: 0 auto 25px auto;
             font-size: 14px;
             font-weight: bold;
@@ -482,7 +484,16 @@
     <div class="excel-container">
         <script>
             function renderTabelWilayah(id, namaWilayah, warnaClass) {
-                let html = `<table id="${id}">`;
+                let html = `<table id="${id}">                <colgroup>
+                    <col style="width:45px;">
+                    <col style="width:120px;">
+                    <col style="width:115px;">
+                    <col style="width:130px;">
+                    <col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;">
+                    <col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;">
+                    <col style="width:140px;">
+                    <col style="width:150px;">
+                </colgroup>`;
                 html += `<tr><td colspan="16" class="header-main ${warnaClass}">REKAPAN ORDERAN ${namaWilayah}</td></tr>`;
                 html += `<tr class="tbl-sub">
                     <td style="width:45px; padding: 0 4px;">NO</td>
@@ -532,55 +543,75 @@
 
         <!-- TOTAL KESELURUHAN -->
         <table>
+                <colgroup>
+                    <col style="width:45px;">
+                    <col style="width:120px;">
+                    <col style="width:115px;">
+                    <col style="width:130px;">
+                    <col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;">
+                    <col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;">
+                    <col style="width:140px;">
+                    <col style="width:150px;">
+                </colgroup>
             <tr>
-                <td colspan="5" class="bg-stok-head" style="font-weight:bold;">TOTAL SELURUH STOK VOUCHER</td>
+                <td colspan="4" class="bg-stok-head" style="font-weight:bold;">TOTAL SELURUH STOK VOUCHER</td>
                 <td colspan="10" class="bg-sisa-head" style="font-weight:bold;">TOTAL SELURUH SISA STOK VOUCHER</td>
                 <td colspan="2" class="bg-jual-head" style="font-weight:bold;">TOTAL SELURUH VOUCHER TERJUAL</td>
             </tr>
             <tr>
                 <td colspan="2" class="bg-stok-sub">VOUCHER</td>
-                <td colspan="3" class="bg-sisa-sub">SISA STOK VOUCHER</td>
+                <td colspan="2" class="bg-sisa-sub">SISA STOK VOUCHER</td>
                 <td colspan="10" class="bg-jual-sub">VOUCHER YANG TERJUAL</td>
                 <td colspan="2" class="bg-jual-sub">JUMLAH VOUCHER TERJUAL</td>
             </tr>
             <tr>
-                <td class="bg-v3k">3.000</td><td colspan="4" class="calculated bg-v3k" id="tot-stok-3000">0</td>
-                <td class="bg-v3k">3.000</td><td colspan="9" class="calculated bg-v3k" id="tot-sisa-3000">0</td>
+                <td colspan="2" class="bg-v3k">3.000</td><td colspan="2" class="calculated bg-v3k" id="tot-stok-3000">0</td>
+                <td colspan="5" class="bg-v3k">3.000</td><td colspan="5" class="calculated bg-v3k" id="tot-sisa-3000">0</td>
                 <td colspan="2" class="calculated bg-v3k" id="tot-jual-3000">0</td>
             </tr>
             <tr>
-                <td class="bg-v5k">5.000</td><td colspan="4" class="calculated bg-v5k" id="tot-stok-5000">0</td>
-                <td class="bg-v5k">5.000</td><td colspan="9" class="calculated bg-v5k" id="tot-sisa-5000">0</td>
+                <td colspan="2" class="bg-v5k">5.000</td><td colspan="2" class="calculated bg-v5k" id="tot-stok-5000">0</td>
+                <td colspan="5" class="bg-v5k">5.000</td><td colspan="5" class="calculated bg-v5k" id="tot-sisa-5000">0</td>
                 <td colspan="2" class="calculated bg-v5k" id="tot-jual-5000">0</td>
             </tr>
             <tr>
-                <td class="bg-tot-row">TOTAL</td><td colspan="4" class="calculated bg-tot-row" id="grand-stok">0</td>
-                <td class="bg-tot-row">TOTAL</td><td colspan="9" class="calculated bg-tot-row" id="grand-sisa">0</td>
+                <td colspan="2" class="bg-tot-row">TOTAL</td><td colspan="2" class="calculated bg-tot-row" id="grand-stok">0</td>
+                <td colspan="5" class="bg-tot-row">TOTAL</td><td colspan="5" class="calculated bg-tot-row" id="grand-sisa">0</td>
                 <td class="bg-tot-row">TOTAL</td><td class="calculated bg-tot-row" id="grand-jual">0</td>
             </tr>
         </table>
 
         <!-- KEUANGAN & TITIPAN (DIOPTIMALKAN LEBAR KOLOMNYA) -->
         <table id="tbl-keuangan">
+                <colgroup>
+                    <col style="width:45px;">
+                    <col style="width:120px;">
+                    <col style="width:115px;">
+                    <col style="width:130px;">
+                    <col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;">
+                    <col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;">
+                    <col style="width:140px;">
+                    <col style="width:150px;">
+                </colgroup>
             <tr>
-                <td colspan="5" class="bg-titip-head" style="font-weight:bold;">VOUCHER TITIPAN / SETORAN BULANAN PELANGGAN</td>
-                <td colspan="5" class="bg-bulanan-head" style="font-weight:bold;">TOTAL PENDAPATAN BULANAN</td>
-                <td colspan="7" class="bg-voucher-head" style="font-weight:bold;">RINGKASAN KEUANGAN & PENDAPATAN</td>
+                <td colspan="6" class="bg-titip-head" style="font-weight:bold;">VOUCHER TITIPAN / SETORAN BULANAN PELANGGAN</td>
+                <td colspan="4" class="bg-bulanan-head" style="font-weight:bold;">TOTAL PENDAPATAN BULANAN</td>
+                <td colspan="6" class="bg-voucher-head" style="font-weight:bold;">RINGKASAN KEUANGAN & PENDAPATAN</td>
             </tr>
             <tr>
                 <td colspan="3" class="bg-titip-sub">N A M A</td>
                 <td colspan="1" class="bg-titip-sub">V 3K / 50K</td>
-                <td colspan="1" class="bg-titip-sub">V 5K / 75K</td>
-                <td colspan="5" rowspan="2" class="calculated bg-bulanan-val" id="tot-pendapatan-bulanan" style="font-size:16px; font-weight:bold;">Rp. 0</td>
-                <td colspan="3" class="bg-v3k" style="font-size: 12px; text-align: center;">VOUCHER - 3.000</td>
-                <td colspan="4" class="calculated bg-voucher-val" id="tot-penjualan-3000" style="font-size: 14px; text-align: center;">0</td>
+                <td colspan="2" class="bg-titip-sub">V 5K / 75K</td>
+                <td colspan="4" rowspan="2" class="calculated bg-bulanan-val" id="tot-pendapatan-bulanan" style="font-size:16px; font-weight:bold;">Rp. 0</td>
+                <td colspan="4" class="bg-v3k" style="font-size: 12px; text-align: center;">VOUCHER - 3.000</td>
+                <td colspan="2" class="calculated bg-voucher-val" id="tot-penjualan-3000" style="font-size: 14px; text-align: center;">0</td>
             </tr>
             <tr>
                 <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan 1" class="save-field reset-target"></td>
                 <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
-                <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                <td colspan="3" class="bg-v5k" style="font-size: 12px; text-align: center;">VOUCHER - 5.000</td>
-                <td colspan="4" class="calculated bg-voucher-val" id="tot-penjualan-5000" style="font-size: 14px; text-align: center;">0</td>
+                <td colspan="2" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                <td colspan="4" class="bg-v5k" style="font-size: 12px; text-align: center;">VOUCHER - 5.000</td>
+                <td colspan="2" class="calculated bg-voucher-val" id="tot-penjualan-5000" style="font-size: 14px; text-align: center;">0</td>
             </tr>
             <!-- Baris Titipan 2 - 12 -->
             <script>
@@ -588,22 +619,22 @@
                     document.write(`<tr>
                         <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan ${i}" class="save-field reset-target"></td>
                         <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
-                        <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                        ${i===2?'<td colspan="5" class="bg-voucher-head">TOTAL PENDAPATAN VOUCHER</td><td colspan="7" class="calculated bg-voucher-val" id="tot-pendapatan-voucher-gabung" style="font-size:15px; font-weight:bold;">Rp. 0</td>':''}
-                        ${i===3?'<td colspan="5" class="bg-kotor-lbl">TOTAL PENDAPATAN KOTOR</td><td colspan="7" class="calculated bg-kotor-val" id="tot-pendapatan-kotor" style="font-size:15px; font-weight:bold;">Rp. 0</td>':''}
-                        ${i===4?'<td colspan="5" class="bg-expense-lbl">TOTAL PENGELUARAN TEKNISI</td><td colspan="7" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
-                        ${i===5?'<td colspan="5" class="bg-expense-lbl">TOTAL PENGELUARAN ADMIN</td><td colspan="7" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-admin" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
-                        ${i===6?'<td colspan="5" class="bg-expense-lbl">TOTAL GAJI TEKNISI</td><td colspan="7" class="bg-expense-inp"><input type="text" inputmode="numeric" id="gaji-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
-                        ${i>=7?'<td colspan="5" class="bg-tot-row"></td><td colspan="7" class="bg-tot-row"></td>':''}
+                        <td colspan="2" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
+                        ${i===2?'<td colspan="4" class="bg-voucher-head">TOTAL PENDAPATAN VOUCHER</td><td colspan="6" class="calculated bg-voucher-val" id="tot-pendapatan-voucher-gabung" style="font-size:15px; font-weight:bold;">Rp. 0</td>':''}
+                        ${i===3?'<td colspan="4" class="bg-kotor-lbl">TOTAL PENDAPATAN KOTOR</td><td colspan="6" class="calculated bg-kotor-val" id="tot-pendapatan-kotor" style="font-size:15px; font-weight:bold;">Rp. 0</td>':''}
+                        ${i===4?'<td colspan="4" class="bg-expense-lbl">TOTAL PENGELUARAN TEKNISI</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
+                        ${i===5?'<td colspan="4" class="bg-expense-lbl">TOTAL PENGELUARAN ADMIN</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-admin" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
+                        ${i===6?'<td colspan="4" class="bg-expense-lbl">TOTAL GAJI TEKNISI</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="gaji-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
+                        ${i>=7?'<td colspan="4" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>':''}
                     </tr>`);
                 }
             </script>
             <tr>
                 <td colspan="3" class="bg-titip-head" style="font-weight:bold;">TOTAL TITIPAN DAN BULANAN</td>
                 <td colspan="1" class="calculated bg-titip-sub" id="tot-titipan-3k">0</td>
-                <td colspan="1" class="calculated bg-titip-sub" id="tot-titipan-5k">0</td>
-                <td colspan="5" class="bg-bersih-lbl" style="font-size:15px; font-weight:bold;">TOTAL PENDAPATAN BERSIH</td>
-                <td colspan="7" class="calculated bg-bersih-val" id="tot-pendapatan-bersih" style="font-size:16px; font-weight:bold;">Rp. 0</td>
+                <td colspan="2" class="calculated bg-titip-sub" id="tot-titipan-5k">0</td>
+                <td colspan="4" class="bg-bersih-lbl" style="font-size:15px; font-weight:bold;">TOTAL PENDAPATAN BERSIH</td>
+                <td colspan="6" class="calculated bg-bersih-val" id="tot-pendapatan-bersih" style="font-size:16px; font-weight:bold;">Rp. 0</td>
             </tr>
         </table>
     </div>
@@ -1170,7 +1201,8 @@
             fields.forEach(function(field, index) {
                 rows.push([index, field.className, field.type || 'text', field.value]);
             });
-            var csv = '\uFEFF' + rows.map(function(row) { return row.map(csvEscape).join(','); }).join('\r\n');
+            var csv = '﻿' + rows.map(function(row) { return row.map(csvEscape).join(','); }).join('
+');
             var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             var url = URL.createObjectURL(blob);
             var a = document.createElement('a'); a.href = url;
@@ -1180,14 +1212,18 @@
 
         function parseCSV(text) {
             var rows = [], row = [], cell = '', quoted = false;
-            text = text.replace(/^\uFEFF/, '');
+            text = text.replace(/^﻿/, '');
             for (var i = 0; i < text.length; i++) {
                 var c = text[i], next = text[i+1];
                 if (c === '"' && quoted && next === '"') { cell += '"'; i++; }
                 else if (c === '"') quoted = !quoted;
                 else if (c === ',' && !quoted) { row.push(cell); cell = ''; }
-                else if ((c === '\n' || c === '\r') && !quoted) {
-                    if (c === '\r' && next === '\n') i++;
+                else if ((c === '
+' || c === '
+') && !quoted) {
+                    if (c === '
+' && next === '
+') i++;
                     row.push(cell); if (row.some(function(v){ return v !== ''; })) rows.push(row);
                     row = []; cell = '';
                 } else cell += c;
