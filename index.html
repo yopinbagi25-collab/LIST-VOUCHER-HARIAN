@@ -268,9 +268,9 @@
         table {
             border-collapse: collapse;
             table-layout: fixed;
-            width: 1450px;
-            min-width: 1450px;
-            max-width: 1450px;
+            width: 1468px;
+            min-width: 1468px;
+            max-width: 1468px;
             margin: 0 auto 25px auto;
             font-size: 14px;
             font-weight: bold;
@@ -286,6 +286,10 @@
             font-size: 0 !important;
             visibility: hidden;
         }
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
         th, td {
             border: 2px solid #595959;
             padding: 0;
@@ -293,6 +297,16 @@
             vertical-align: middle;
             height: 44px;
             white-space: nowrap;
+            overflow: hidden;
+        }
+        .tbl-sub td,
+        .bg-stok-sub,
+        .bg-sisa-sub,
+        .bg-jual-sub,
+        .bg-titip-sub {
+            white-space: normal !important;
+            line-height: 1.15;
+            padding: 2px 4px !important;
         }
         
         td input {
@@ -499,7 +513,7 @@
                     <col style="width:45px;">
                     <col style="width:120px;">
                     <col style="width:115px;">
-                    <col style="width:130px;">
+                    <col style="width:148px;">
                     <col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;">
                     <col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;">
                     <col style="width:140px;">
@@ -510,7 +524,7 @@
                     <td style="width:45px; padding: 0 4px;">NO</td>
                     <td style="width:120px; padding: 0 6px;">VOUCHER</td>
                     <td style="width:115px; padding: 0 6px;">STOK VOUCHER</td>
-                    <td style="width:130px; padding: 0 6px;">SISA STOK VOUCHER</td>
+                    <td style="width:148px; padding: 0 6px;">SISA STOK VOUCHER</td>
                     <td colspan="10" style="padding: 0 6px;">ORDERAN VOUCHER</td>
                     <td style="width:140px; padding: 0 6px;">TOTAL PERKOLOM</td>
                     <td style="width:150px; padding: 0 6px;">TOTAL KESELURUHAN</td>
@@ -558,7 +572,7 @@
                     <col style="width:45px;">
                     <col style="width:120px;">
                     <col style="width:115px;">
-                    <col style="width:130px;">
+                    <col style="width:148px;">
                     <col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;">
                     <col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;">
                     <col style="width:140px;">
@@ -568,7 +582,7 @@
                 <td style="width:45px;"></td>
                 <td style="width:120px;"></td>
                 <td style="width:115px;"></td>
-                <td style="width:130px;"></td>
+                <td style="width:148px;"></td>
                 <td style="width:75px;"></td><td style="width:75px;"></td><td style="width:75px;"></td><td style="width:75px;"></td><td style="width:75px;"></td>
                 <td style="width:75px;"></td><td style="width:75px;"></td><td style="width:75px;"></td><td style="width:75px;"></td><td style="width:75px;"></td>
                 <td style="width:140px;"></td>
@@ -609,7 +623,7 @@
                     <col style="width:45px;">
                     <col style="width:120px;">
                     <col style="width:115px;">
-                    <col style="width:130px;">
+                    <col style="width:148px;">
                     <col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;">
                     <col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;"><col style="width:75px;">
                     <col style="width:140px;">
@@ -619,7 +633,7 @@
                 <td style="width:45px;"></td>
                 <td style="width:120px;"></td>
                 <td style="width:115px;"></td>
-                <td style="width:130px;"></td>
+                <td style="width:148px;"></td>
                 <td style="width:75px;"></td><td style="width:75px;"></td><td style="width:75px;"></td><td style="width:75px;"></td><td style="width:75px;"></td>
                 <td style="width:75px;"></td><td style="width:75px;"></td><td style="width:75px;"></td><td style="width:75px;"></td><td style="width:75px;"></td>
                 <td style="width:140px;"></td>
