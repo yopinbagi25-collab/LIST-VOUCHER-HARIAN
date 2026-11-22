@@ -297,6 +297,7 @@
             display: block;
             line-height: 1.2;
             letter-spacing: 0.2px;
+            white-space: nowrap;
         }
         @media (max-width: 1200px) {
             .rekap-summary-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -349,18 +350,18 @@
             border-bottom: 2px solid #0f172a;
         }
         /* 12 Warna Header Kolom */
-        .rekap-table th.th-tgl { background: #0369a1; border-top-left-radius: 9px; }     /* 1. Biru Laut */
-        .rekap-table th.th-v3k { background: #991b1b; }                                 /* 2. Merah Tua */
-        .rekap-table th.th-v5k { background: #5b21b6; }                                 /* 3. Ungu Tua */
-        .rekap-table th.th-bulanan { background: #155e75; }                             /* 4. Cyan Tua */
-        .rekap-table th.th-kotor { background: #854d0e; }                               /* 5. Emas Tua */
-        .rekap-table th.th-tek { background: #9f1239; }                                 /* 6. Rose Tua */
-        .rekap-table th.th-adm { background: #86198f; }                                 /* 7. Magenta Tua */
-        .rekap-table th.th-gaji { background: #9a3412; }                                /* 8. Oranye Tua */
-        .rekap-table th.th-diskon { background: #0f766e; }                              /* 9. Teal Tua (Diskon Reseller) */
-        .rekap-table th.th-tot-peng { background: #334155; }                            /* 10. Slate Gelap */
-        .rekap-table th.th-bersih { background: #065f46; }                              /* 11. Hijau Tua */
-        .rekap-table th.th-aksi { background: #3730a3; border-top-right-radius: 9px; }  /* 12. Indigo Tua */
+        .rekap-table th.th-tgl { background: #0369a1; border-top-left-radius: 9px; }
+        .rekap-table th.th-v3k { background: #991b1b; }
+        .rekap-table th.th-v5k { background: #5b21b6; }
+        .rekap-table th.th-bulanan { background: #155e75; }
+        .rekap-table th.th-kotor { background: #854d0e; }
+        .rekap-table th.th-tek { background: #9f1239; }
+        .rekap-table th.th-adm { background: #86198f; }
+        .rekap-table th.th-gaji { background: #9a3412; }
+        .rekap-table th.th-diskon { background: #0f766e; }
+        .rekap-table th.th-tot-peng { background: #334155; }
+        .rekap-table th.th-bersih { background: #065f46; }
+        .rekap-table th.th-aksi { background: #3730a3; border-top-right-radius: 9px; }
 
         .rekap-table tbody tr {
             background: #131b2c;
@@ -495,13 +496,11 @@
             box-shadow: inset 0 0 0 2px #1a73e8;
         }
 
-        /* Lebar khusus kolom orderan agar tidak kepotong */
         .col-orderan {
             min-width: 75px;
             width: 75px;
         }
 
-        /* Penyesuaian khusus layar HP */
         @media (max-width: 768px) {
             body {
                 padding: 8px;
@@ -608,7 +607,7 @@
         body.dark-mode .bg-bersih-lbl { background-color: #15803d !important; color: #fff !important; font-weight: bold; }
         body.dark-mode .bg-bersih-val { background-color: #14532d !important; color: #dcfce7 !important; font-weight: bold; }
 
-        /* Tampilan khusus HP untuk ringkasan rekap bulanan */
+        /* Tampilan khusus HP untuk ringkasan rekap bulanan (ANTI TEKS KEPOTONG) */
         @media (max-width: 700px) {
             .modal-overlay {
                 padding: 6px; align-items: flex-start; justify-content: flex-start;
@@ -620,13 +619,41 @@
                 padding: 12px 8px; overflow: visible; flex: 0 0 auto;
             }
             .modal-header { flex-direction: column; gap: 10px; padding-bottom: 10px; margin-bottom: 12px; }
-            .modal-header h3 { font-size: 16px !important; line-height: 1.4; }
+            .modal-header h3 { font-size: 15px !important; line-height: 1.35; }
             .modal-close { width: 100%; min-height: 40px; font-size: 14px; }
-            .rekap-summary-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; padding: 8px; }
-            .rekap-card { padding: 10px 8px; min-width: 0; gap: 6px; border-radius: 12px; }
-            .rekap-card .rekap-card-ico { font-size: 14px; }
-            .rekap-card .rekap-card-title { font-size: 10.5px; }
-            .rekap-card strong { font-size: 17px; overflow-wrap: anywhere; }
+            .rekap-summary-cards {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+                margin-bottom: 12px;
+                padding: 8px;
+            }
+            .rekap-card {
+                padding: 10px 6px;
+                min-width: 0;
+                gap: 6px;
+                border-radius: 12px;
+            }
+            .rekap-card .rekap-card-head {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            .rekap-card .rekap-card-ico {
+                font-size: 13px;
+            }
+            .rekap-card .rekap-card-title {
+                font-size: 10px;
+                line-height: 1.25;
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
+                word-break: break-word;
+            }
+            .rekap-card strong {
+                font-size: clamp(13px, 3.8vw, 17px);
+                line-height: 1.25;
+                white-space: nowrap;
+                overflow: visible;
+            }
             .rekap-table-wrap {
                 display: block; width: 100%; max-width: 100%;
                 overflow-x: auto !important; overflow-y: hidden;
