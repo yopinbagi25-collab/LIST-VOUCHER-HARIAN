@@ -84,7 +84,7 @@
         }
         .nsnet-menu {
             display: grid;
-            grid-template-columns: repeat(8, minmax(0, 1fr));
+            grid-template-columns: repeat(9, minmax(0, 1fr));
             align-items: stretch;
             justify-content: stretch;
             width: 100%;
@@ -126,6 +126,7 @@
         .btn-backup { background: #0284c7; }
         .btn-restore { background: #0d9488; }
         .btn-reset { background: #ef4444; }
+        .btn-reset-all { background: #7f1d1d; border: 1px solid #fecaca; }
         .btn-calc { background: #107c41; }
         .btn-rekap { background: #f59e0b; color: #000; }
 
@@ -257,30 +258,57 @@
             text-align: center;
             display: block;
         }
+        .rekap-table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            border-radius: 6px;
+            -webkit-overflow-scrolling: touch;
+        }
         .rekap-table {
             width: 100%;
+            min-width: 0;
+            table-layout: fixed;
             border-collapse: collapse;
-            font-size: 16px;
+            font-size: 11px;
             font-weight: bold;
             margin-bottom: 0;
             text-align: center;
         }
         .rekap-table th, .rekap-table td {
             border: 1px solid #334155;
-            padding: 12px 14px;
+            padding: 4px 2px;
             height: auto;
             color: #f8fafc;
-            text-align: center;
+            text-align: center !important;
             vertical-align: middle;
-            font-size: 16px;
+            font-size: 11px;
             font-weight: bold;
+            box-sizing: border-box;
+            overflow: visible;
         }
         .rekap-table th {
             background: #0f172a;
             color: #38bdf8;
-            font-size: 17px;
-            font-weight: bold;
-            text-align: center;
+            font-size: 13px;
+            font-weight: 900;
+            text-align: center !important;
+            white-space: normal;
+            line-height: 1.2;
+            overflow-wrap: anywhere;
+            word-break: normal;
+            height: 76px;
+            padding: 6px 2px;
+        }
+        .rekap-table td { white-space: nowrap; overflow: visible; font-variant-numeric: tabular-nums; }
+        .rekap-table th { overflow-wrap: anywhere; }
+        .rekap-table-wrap { overflow-x: hidden; }
+        @media (max-width: 700px) {
+            .modal-overlay { padding: 4px; }
+            .modal-box { padding: 8px 4px; width: 100%; }
+            .rekap-table { min-width: 0; }
+            .rekap-table th { font-size: 11px; font-weight: 900; padding: 5px 1px; line-height: 1.15; height: 76px; }
+            .rekap-table td { font-size: 9px; padding: 5px 1px; }
         }
 
         /* --- STYLING EXCEL CONTAINER (RESPONSIF & SMOOTH SCROLL) --- */
@@ -490,6 +518,7 @@
             <button type="button" class="nsnet-btn btn-backup" onclick="backupJSON()">💾 BACKUP ALL JSON</button>
             <button type="button" class="nsnet-btn btn-restore" onclick="restoreJSON()">📂 RESTORE JSON</button>
             <button type="button" class="nsnet-btn btn-reset" onclick="resetHariIni()">🗑️ RESET TGL INI</button>
+            <button type="button" class="nsnet-btn btn-reset-all" onclick="resetSemuaTanggal()">⚠️ RESET SEMUA TANGGAL</button>
         </div>
     </div>
 
@@ -504,7 +533,7 @@
                     <option value="01">Januari</option><option value="02">Februari</option><option value="03">Maret</option><option value="04">April</option><option value="05">Mei</option><option value="06">Juni</option><option value="07">Juli</option><option value="08">Agustus</option><option value="09">September</option><option value="10" selected>Oktober</option><option value="11">November</option><option value="12">Desember</option>
                 </select>
                 <select id="select-tahun" class="date-select" onchange="ubahBulanTahun()">
-                    <option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option>
+                    <option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option><option value="2031">2031</option><option value="2032">2032</option><option value="2033">2033</option><option value="2034">2034</option><option value="2035">2035</option><option value="2036">2036</option><option value="2037">2037</option><option value="2038">2038</option><option value="2039">2039</option><option value="2040">2040</option>
                 </select>
             </div>
             <div class="active-date-badge">
@@ -517,7 +546,7 @@
     <div class="modal-overlay" id="modal-rekap">
         <div class="modal-box">
             <div class="modal-header">
-                <h3 style="margin:0; font-size:16px;">📊 RINGKASAN REKAPITULASI TANGGAL 1 – 31 (<span id="rekap-periode-label"></span>)</h3>
+                <h3 style="margin:0; font-size:14px;">📊 RINGKASAN REKAPITULASI TANGGAL 1 – 31 (<span id="rekap-periode-label"></span>)</h3>
                 <button type="button" class="modal-close" onclick="tutupRekapBulanan()">✖ Tutup</button>
             </div>
             <div class="rekap-summary-cards">
@@ -526,12 +555,27 @@
                 <div class="rekap-card"><span>PENDAPATAN KOTOR</span><strong id="rek-kotor" style="color:#facc15;">Rp. 0</strong></div>
                 <div class="rekap-card"><span>PENDAPATAN BERSIH</span><strong id="rek-bersih" style="color:#4ade80;">Rp. 0</strong></div>
             </div>
+            <div class="rekap-table-wrap">
             <table class="rekap-table">
+                <colgroup>
+                    <col style="width:8%;">
+                    <col style="width:9%;">
+                    <col style="width:9%;">
+                    <col style="width:8%;">
+                    <col style="width:10%;">
+                    <col style="width:10%;">
+                    <col style="width:10%;">
+                    <col style="width:8%;">
+                    <col style="width:10%;">
+                    <col style="width:10%;">
+                    <col style="width:8%;">
+                </colgroup>
                 <thead>
-                    <tr><th>Tanggal</th><th>Terjual 3.000</th><th>Terjual 5.000</th><th>Bulanan</th><th>Pendapatan Kotor</th><th>Pengeluaran</th><th>Pendapatan Bersih</th><th>Aksi</th></tr>
+                    <tr><th>Tanggal</th><th>Terjual<br>Voucher<br>3.000</th><th>Terjual<br>Voucher<br>5.000</th><th>Tagihan<br>Bulanan</th><th>Pendapatan<br>Kotor</th><th>Pengeluaran<br>Teknisi</th><th>Pengeluaran<br>Admin</th><th>Gaji<br>Teknisi</th><th>Total<br>Pengeluaran</th><th>Pendapatan<br>Bersih</th><th>Aksi</th></tr>
                 </thead>
                 <tbody id="rekap-table-body"></tbody>
             </table>
+            </div>
         </div>
     </div>
 
@@ -576,12 +620,12 @@
                     html += `<td class="calculated sisa">0</td>`;
                     
                     for(let c=0; c<10; c++) {
-                        html += `<td class="col-orderan"><input type="text" inputmode="numeric" value="" class="ord save-field reset-target" style="font-size:15px; font-weight:bold;"></td>`;
+                        html += `<td class="col-orderan"><input type="text" inputmode="numeric" value="" class="ord save-field reset-target" style="font-size:14px; font-weight:bold;"></td>`;
                     }
 
                     html += `<td class="calculated tot-kolom">Rp. 0</td>`;
                     if(idx === 0) {
-                        html += `<td rowspan="3" class="calculated tot-wilayah" style="font-size:15px; font-weight:bold;">Rp. 0</td>`;
+                        html += `<td rowspan="3" class="calculated tot-wilayah" style="font-size:14px; font-weight:bold;">Rp. 0</td>`;
                     }
                     html += `</tr>`;
                 });
@@ -679,7 +723,7 @@
                 <td colspan="3" class="bg-titip-sub">N A M A</td>
                 <td colspan="1" class="bg-titip-sub">V 3K / 50K</td>
                 <td colspan="2" class="bg-titip-sub">V 5K / 75K</td>
-                <td colspan="4" rowspan="2" class="calculated bg-bulanan-val" id="tot-pendapatan-bulanan" style="font-size:16px; font-weight:bold;">Rp. 0</td>
+                <td colspan="4" rowspan="2" class="calculated bg-bulanan-val" id="tot-pendapatan-bulanan" style="font-size:14px; font-weight:bold;">Rp. 0</td>
                 <td colspan="4" class="bg-v3k" style="font-size: 12px; text-align: center;">VOUCHER - 3.000</td>
                 <td colspan="2" class="calculated bg-voucher-val" id="tot-penjualan-3000" style="font-size: 14px; text-align: center;">0</td>
             </tr>
@@ -697,8 +741,8 @@
                         <td colspan="3" class="bg-titip-row"><input type="text" placeholder="Nama Titipan ${i}" class="save-field reset-target"></td>
                         <td colspan="1" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-3k save-field reset-target"></td>
                         <td colspan="2" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
-                        ${i===2?'<td colspan="4" class="bg-voucher-head">TOTAL PENDAPATAN VOUCHER</td><td colspan="6" class="calculated bg-voucher-val" id="tot-pendapatan-voucher-gabung" style="font-size:15px; font-weight:bold;">Rp. 0</td>':''}
-                        ${i===3?'<td colspan="4" class="bg-kotor-lbl">TOTAL PENDAPATAN KOTOR</td><td colspan="6" class="calculated bg-kotor-val" id="tot-pendapatan-kotor" style="font-size:15px; font-weight:bold;">Rp. 0</td>':''}
+                        ${i===2?'<td colspan="4" class="bg-voucher-head">TOTAL PENDAPATAN VOUCHER</td><td colspan="6" class="calculated bg-voucher-val" id="tot-pendapatan-voucher-gabung" style="font-size:14px; font-weight:bold;">Rp. 0</td>':''}
+                        ${i===3?'<td colspan="4" class="bg-kotor-lbl">TOTAL PENDAPATAN KOTOR</td><td colspan="6" class="calculated bg-kotor-val" id="tot-pendapatan-kotor" style="font-size:14px; font-weight:bold;">Rp. 0</td>':''}
                         ${i===4?'<td colspan="4" class="bg-expense-lbl">TOTAL PENGELUARAN TEKNISI</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
                         ${i===5?'<td colspan="4" class="bg-expense-lbl">TOTAL PENGELUARAN ADMIN</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-admin" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
                         ${i===6?'<td colspan="4" class="bg-expense-lbl">TOTAL GAJI TEKNISI</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="gaji-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
@@ -710,8 +754,8 @@
                 <td colspan="3" class="bg-titip-head" style="font-weight:bold;">TOTAL TITIPAN DAN BULANAN</td>
                 <td colspan="1" class="calculated bg-titip-sub" id="tot-titipan-3k">0</td>
                 <td colspan="2" class="calculated bg-titip-sub" id="tot-titipan-5k">0</td>
-                <td colspan="4" class="bg-bersih-lbl" style="font-size:15px; font-weight:bold;">TOTAL PENDAPATAN BERSIH</td>
-                <td colspan="6" class="calculated bg-bersih-val" id="tot-pendapatan-bersih" style="font-size:16px; font-weight:bold;">Rp. 0</td>
+                <td colspan="4" class="bg-bersih-lbl" style="font-size:14px; font-weight:bold;">TOTAL PENDAPATAN BERSIH</td>
+                <td colspan="6" class="calculated bg-bersih-val" id="tot-pendapatan-bersih" style="font-size:14px; font-weight:bold;">Rp. 0</td>
             </tr>
         </table>
     </div>
@@ -760,6 +804,24 @@
 
         function formatRupiah(angka) {
             return 'Rp. ' + Number(angka || 0).toLocaleString('id-ID');
+        }
+
+        // Nilai pengeluaran disimpan sebagai angka murni, sedangkan tampilan input memakai format Rupiah.
+        function parseNominalRupiah(value) {
+            var digits = String(value == null ? '' : value).replace(/[^0-9]/g, '');
+            return digits ? Number(digits) : 0;
+        }
+
+        function formatInputRupiah(field) {
+            if (!field) return;
+            var nominal = parseNominalRupiah(field.value);
+            field.value = field.value.trim() === '' ? '' : formatRupiah(nominal);
+        }
+
+        function formatSemuaInputPengeluaran() {
+            ['pengeluaran-teknisi', 'pengeluaran-admin', 'gaji-teknisi'].forEach(function(id) {
+                formatInputRupiah(document.getElementById(id));
+            });
         }
 
         function pad2(num) {
@@ -877,9 +939,9 @@
             var angkaKotor = totalPendapatanBulananSum + totalRupiahVoucher3k + totalRupiahVoucher5k;
             document.getElementById('tot-pendapatan-kotor').innerText = formatRupiah(angkaKotor);
 
-            var pTeknisi = parseFloat(document.getElementById('pengeluaran-teknisi').value.replace(/[^0-9.-]+/g,"")) || 0;
-            var pAdmin = parseFloat(document.getElementById('pengeluaran-admin').value.replace(/[^0-9.-]+/g,"")) || 0;
-            var gTeknisi = parseFloat(document.getElementById('gaji-teknisi').value.replace(/[^0-9.-]+/g,"")) || 0;
+            var pTeknisi = parseNominalRupiah(document.getElementById('pengeluaran-teknisi').value);
+            var pAdmin = parseNominalRupiah(document.getElementById('pengeluaran-admin').value);
+            var gTeknisi = parseNominalRupiah(document.getElementById('gaji-teknisi').value);
             var totalPengeluaran = pTeknisi + pAdmin + gTeknisi;
 
             var totBersih = angkaKotor - totalPengeluaran;
@@ -893,7 +955,7 @@
 
             return {
                 jual3k: totJual3k, jual5k: totJual5k, bulanan: totalPendapatanBulananSum,
-                kotor: angkaKotor, pengeluaran: totalPengeluaran, bersih: totBersih
+                kotor: angkaKotor, pengeluaran: totalPengeluaran, pengeluaranTeknisi: pTeknisi, pengeluaranAdmin: pAdmin, gajiTeknisi: gTeknisi, bersih: totBersih
             };
         }
 
@@ -903,7 +965,14 @@
             var targetPeriod = { tgl: tanggalAktif, bln: bulanAktif, thn: tahunAktif };
             var summary = hitungUlang();
             var fields = document.querySelectorAll('.save-field');
-            var data = { meta_summary: summary, savedAt: Date.now(), savedAtZone: 'Asia/Makassar' };
+            var data = {
+                meta_summary: summary,
+                pengeluaranTeknisi: summary.pengeluaranTeknisi,
+                pengeluaranAdmin: summary.pengeluaranAdmin,
+                gajiTeknisi: summary.gajiTeknisi,
+                savedAt: Date.now(),
+                savedAtZone: 'Asia/Makassar'
+            };
             fields.forEach(function(field, index) { data['f_' + index] = field.value; });
             try {
                 localStorage.setItem(targetKey, JSON.stringify(data));
@@ -956,6 +1025,7 @@
                     field.value = field.classList.contains('tgl-input') ? defaultTglStr : '';
                 });
             }
+            formatSemuaInputPengeluaran();
             hitungUlang();
             perbaruiTampilanNavigasi();
             isRemoteUpdating = false;
@@ -1063,40 +1133,72 @@
             var tot3k = 0, tot5k = 0, totKotor = 0, totBersih = 0;
             var tbody = document.getElementById('rekap-table-body');
             tbody.innerHTML = '';
-            var sumBulanan = 0, sumPengeluaran = 0;
+            var sumBulanan = 0, sumPengeluaran = 0, sumPTeknisi = 0, sumPAdmin = 0, sumGajiTeknisi = 0;
+            var saveFieldsForIndex = Array.from(document.querySelectorAll('.save-field'));
+            var idxPTeknisi = saveFieldsForIndex.findIndex(function(el){ return el.id === 'pengeluaran-teknisi'; });
+            var idxPAdmin = saveFieldsForIndex.findIndex(function(el){ return el.id === 'pengeluaran-admin'; });
+            var idxGajiTeknisi = saveFieldsForIndex.findIndex(function(el){ return el.id === 'gaji-teknisi'; });
 
             for (var d = 1; d <= 31; d++) {
                 var raw = null;
                 try { raw = localStorage.getItem(getStorageKey(d, bulanAktif, tahunAktif)); } catch (e) {}
                 var s = { jual3k: 0, jual5k: 0, bulanan: 0, kotor: 0, pengeluaran: 0, bersih: 0 };
+                var detailRaw = null;
                 var terisi = false;
                 if (raw) {
                     try {
-                        var parsed = JSON.parse(raw);
-                        if (parsed.meta_summary) {
-                            s = parsed.meta_summary;
+                        detailRaw = JSON.parse(raw);
+                        if (detailRaw && detailRaw.meta_summary) {
+                            s = detailRaw.meta_summary;
                             terisi = cekTanggalTerisi(d, bulanAktif, tahunAktif);
                         }
-                    } catch (e) {}
+                    } catch (e) { detailRaw = null; }
                 }
 
-                tot3k += s.jual3k || 0;
-                tot5k += s.jual5k || 0;
-                sumBulanan += s.bulanan || 0;
-                totKotor += s.kotor || 0;
-                sumPengeluaran += s.pengeluaran || 0;
-                totBersih += s.bersih || 0;
+                // Semua nilai dinormalisasi sebagai angka. Mendukung data lama yang menyimpan
+                // nominal sebagai teks "Rp. 130.000" maupun data baru yang menyimpan angka.
+                tot3k += parseNominalRupiah(s.jual3k || 0);
+                tot5k += parseNominalRupiah(s.jual5k || 0);
+                sumBulanan += parseNominalRupiah(s.bulanan || 0);
+                totKotor += parseNominalRupiah(s.kotor || 0);
+
+                // Prioritas: properti khusus pada data tersimpan, lalu meta_summary,
+                // terakhir field f_index untuk kompatibilitas rekapan versi sebelumnya.
+                function ambilNominalPengeluaran(nama, nilaiSummary, indexField) {
+                    if (detailRaw && detailRaw[nama] !== undefined && detailRaw[nama] !== null && detailRaw[nama] !== '')
+                        return parseNominalRupiah(detailRaw[nama]);
+                    if (nilaiSummary !== undefined && nilaiSummary !== null && nilaiSummary !== '')
+                        return parseNominalRupiah(nilaiSummary);
+                    if (detailRaw && indexField >= 0 && detailRaw['f_' + indexField] !== undefined)
+                        return parseNominalRupiah(detailRaw['f_' + indexField]);
+                    return 0;
+                }
+                var pTek = ambilNominalPengeluaran('pengeluaranTeknisi', s.pengeluaranTeknisi, idxPTeknisi);
+                var pAdm = ambilNominalPengeluaran('pengeluaranAdmin', s.pengeluaranAdmin, idxPAdmin);
+                var gTek = ambilNominalPengeluaran('gajiTeknisi', s.gajiTeknisi, idxGajiTeknisi);
+                var totalHariPengeluaran = pTek + pAdm + gTek;
+                var totalHariTersimpan = parseNominalRupiah(s.pengeluaran || 0);
+                if (totalHariPengeluaran === 0 && totalHariTersimpan > 0) totalHariPengeluaran = totalHariTersimpan;
+
+                sumPTeknisi += pTek;
+                sumPAdmin += pAdm;
+                sumGajiTeknisi += gTek;
+                sumPengeluaran += totalHariPengeluaran;
+                totBersih += parseNominalRupiah(s.bersih || 0);
 
                 var tr = document.createElement('tr');
                 tr.style.opacity = terisi ? '1' : '0.45';
                 tr.innerHTML = 
-                    '<td style="text-align:center; font-weight:bold; font-size:16px;"><strong>' + pad2(d) + '/' + bulanAktif + '/' + tahunAktif + '</strong></td>' +
-                    '<td style="text-align:center; font-weight:bold; font-size:16px;">' + (s.jual3k || 0) + '</td>' +
-                    '<td style="text-align:center; font-weight:bold; font-size:16px;">' + (s.jual5k || 0) + '</td>' +
-                    '<td style="text-align:center; font-weight:bold; font-size:16px;">' + formatRupiah(s.bulanan || 0) + '</td>' +
-                    '<td style="text-align:center; font-weight:bold; font-size:16px;">' + formatRupiah(s.kotor || 0) + '</td>' +
-                    '<td style="text-align:center; font-weight:bold; font-size:16px; color:#f87171;">' + formatRupiah(s.pengeluaran || 0) + '</td>' +
-                    '<td style="text-align:center; font-weight:bold; font-size:16px; color:#4ade80;">' + formatRupiah(s.bersih || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px;"><strong>' + pad2(d) + '/' + bulanAktif + '/' + tahunAktif + '</strong></td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px;">' + (s.jual3k || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px;">' + (s.jual5k || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px;">' + formatRupiah(s.bulanan || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px;">' + formatRupiah(s.kotor || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px; color:#f87171;">' + formatRupiah(s.pengeluaranTeknisi || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px; color:#fb923c;">' + formatRupiah(s.pengeluaranAdmin || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px; color:#facc15;">' + formatRupiah(s.gajiTeknisi || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px; color:#f87171;">' + formatRupiah((s.pengeluaranTeknisi || 0)+(s.pengeluaranAdmin || 0)+(s.gajiTeknisi || 0) || s.pengeluaran || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px; color:#4ade80;">' + formatRupiah(s.bersih || 0) + '</td>' +
                     '<td style="text-align:center;"><button type="button" onclick="tutupRekapBulanan(); pindahTanggal(' + d + ');" style="background:#0284c7; color:#fff; border:none; border-radius:6px; padding:8px 16px; cursor:pointer; font-size:14px; font-weight:bold;">Buka</button></td>';
                 tbody.appendChild(tr);
             }
@@ -1105,14 +1207,17 @@
             trTot.style.background = '#0f172a';
             trTot.style.borderTop = '3px solid #38bdf8';
             trTot.innerHTML = 
-                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#38bdf8;">TOTAL</td>' +
-                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#38bdf8;">' + tot3k.toLocaleString('id-ID') + '</td>' +
-                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#38bdf8;">' + tot5k.toLocaleString('id-ID') + '</td>' +
-                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#38bdf8;">' + formatRupiah(sumBulanan) + '</td>' +
-                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#facc15;">' + formatRupiah(totKotor) + '</td>' +
-                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#f87171;">' + formatRupiah(sumPengeluaran) + '</td>' +
-                '<td style="text-align:center; font-weight:bold; font-size:17px; color:#4ade80;">' + formatRupiah(totBersih) + '</td>' +
-                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#94a3b8;">-</td>';
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#38bdf8;">TOTAL</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#38bdf8;">' + tot3k.toLocaleString('id-ID') + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#38bdf8;">' + tot5k.toLocaleString('id-ID') + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#38bdf8;">' + formatRupiah(sumBulanan) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#facc15;">' + formatRupiah(totKotor) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#f87171;">' + formatRupiah(sumPTeknisi) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#fb923c;">' + formatRupiah(sumPAdmin) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#facc15;">' + formatRupiah(sumGajiTeknisi) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#f87171;">' + formatRupiah(sumPengeluaran) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#4ade80;">' + formatRupiah(totBersih) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:13px; color:#94a3b8;">-</td>';
             tbody.appendChild(trTot);
 
             document.getElementById('rek-v3k').innerText = tot3k.toLocaleString('id-ID') + ' pcs';
@@ -1178,6 +1283,19 @@
                 input.addEventListener('input', autoSaveData);
                 input.addEventListener('change', autoSaveData);
             });
+            ['pengeluaran-teknisi', 'pengeluaran-admin', 'gaji-teknisi'].forEach(function(id) {
+                var field = document.getElementById(id);
+                if (field) {
+                    field.addEventListener('blur', function() {
+                        formatInputRupiah(field);
+                        hitungUlang();
+                        autoSaveData();
+                    });
+                    field.addEventListener('focus', function() {
+                        field.value = String(parseNominalRupiah(field.value) || '');
+                    });
+                }
+            });
         });
 
         function toggleDarkMode() {
@@ -1242,27 +1360,92 @@
             input.click();
         }
 
-        function resetHariIni() {
-            var tanggalLabel = formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif);
-            if (!confirm('Yakin ingin mengosongkan seluruh data Tanggal ' + tanggalLabel + '? Data akan ikut kosong di HP dan komputer lain.')) return;
+        async function resetHariIni() {
+            // Reset hanya record untuk tanggal/bulan/tahun yang sedang dipilih.
+            // Jangan menulis ulang seluruh input tanggal (.tgl-input), karena input tersebut
+            // dapat mewakili tanggal pada baris lain dan membuat tanggal lain tampak berubah.
+            var targetTgl = Number(tanggalAktif);
+            var targetBln = String(bulanAktif).padStart(2, '0');
+            var targetThn = String(tahunAktif);
+            var tanggalLabel = formatTanggalLengkap(targetTgl, targetBln, targetThn);
+            if (!confirm('Reset hanya data Tanggal ' + tanggalLabel + '? Tanggal dan data periode lainnya tidak akan diubah.')) return;
+
+            var storageKey = getStorageKey(targetTgl, targetBln, targetThn);
+            var cleanKey = storageKey.replace(/\./g, '_');
             var fields = Array.from(document.querySelectorAll('.save-field'));
-            var resetData = { meta_summary: { jual3k:0, jual5k:0, bulanan:0, kotor:0, pengeluaran:0, bersih:0 }, meta_reset: true, resetAt: Date.now(), resetByZone: 'Asia/Makassar' };
+            var resetData = {
+                meta_summary: { jual3k:0, jual5k:0, bulanan:0, kotor:0, pengeluaran:0, pengeluaranTeknisi:0, pengeluaranAdmin:0, gajiTeknisi:0, bersih:0 },
+                pengeluaranTeknisi: 0, pengeluaranAdmin: 0, gajiTeknisi: 0,
+                meta_reset: true, resetAt: Date.now(), resetByZone: 'Asia/Makassar',
+                resetPeriod: { tgl: targetTgl, bln: targetBln, thn: targetThn }
+            };
+
+            // Kosongkan nilai transaksi pada form aktif, tetapi pertahankan semua field tanggal
+            // apa adanya sehingga tanggal baris lain tidak ikut diganti.
             fields.forEach(function(field, index) {
-                field.value = field.classList.contains('tgl-input') ? tanggalLabel : '';
+                if (!field.classList.contains('tgl-input')) field.value = '';
                 resetData['f_' + index] = field.value;
             });
-            var storageKey = getStorageKey(tanggalAktif, bulanAktif, tahunAktif);
-            var cleanKey = storageKey.replace(/\./g, '_');
+
             isRemoteUpdating = true;
-            try { localStorage.setItem(storageKey, JSON.stringify(resetData)); } catch(e) {}
-            hitungUlang();
-            perbaruiTampilanNavigasi();
-            db.ref('rekapan_harian/' + cleanKey).set(resetData).then(function() {
-                alert('Data tanggal ' + tanggalLabel + ' berhasil direset dan disinkronkan ke semua perangkat.');
-            }).catch(function(err) {
+            try {
+                // Tulis hanya ke key spesifik tanggal terpilih; tidak menyentuh key tanggal lain.
+                await db.ref('rekapan_harian/' + cleanKey).set(resetData);
+                localStorage.setItem(storageKey, JSON.stringify(resetData));
+                hitungUlang();
+                perbaruiTampilanNavigasi();
+                alert('Data ' + tanggalLabel + ' berhasil direset. Data tanggal lain tetap dipertahankan.');
+            } catch (err) {
                 console.error('Reset Firebase gagal:', err);
-                alert('Data lokal sudah dikosongkan, tetapi sinkronisasi Firebase gagal. Periksa koneksi dan izin database.');
-            }).finally(function() { isRemoteUpdating = false; });
+                alert('Reset dibatalkan karena penyimpanan Firebase gagal. Data tanggal lain tidak disentuh. Periksa koneksi dan izin database.');
+                // Muat kembali data target dari sumber lokal/cloud agar form tidak tertinggal dalam keadaan kosong.
+                try { await muatDataLocalDanRemote(targetTgl, targetBln, targetThn); } catch (e) {}
+            } finally {
+                isRemoteUpdating = false;
+            }
+        }
+
+        async function resetSemuaTanggal() {
+            // Tindakan ini menghapus seluruh rekapan harian di Firebase dan cache lokal perangkat ini.
+            // Data pengaturan periode aktif dan preferensi tampilan tidak ikut dihapus.
+            if (!confirm('PERINGATAN: Reset SEMUA TANGGAL akan menghapus seluruh data rekapan dari semua tanggal, bulan, dan tahun di Firebase. Tindakan ini tidak dapat dibatalkan.\n\nSebaiknya unduh BACKUP ALL JSON terlebih dahulu. Lanjutkan?')) return;
+
+            var tombol = document.querySelector('.btn-reset-all');
+            if (tombol) { tombol.disabled = true; tombol.textContent = '⏳ SEDANG RESET...'; }
+            try {
+                // Baca dahulu agar jumlah tanggal yang akan dihapus dapat dikonfirmasi.
+                var snapshot = await db.ref('rekapan_harian').once('value');
+                var cloudData = snapshot.val() || {};
+                var cloudCount = Object.keys(cloudData).length;
+                var localKeys = [];
+                for (var i = 0; i < localStorage.length; i++) {
+                    var key = localStorage.key(i);
+                    if (key && key.indexOf('nsnet_rekapan_v46_') === 0) localKeys.push(key);
+                }
+                var totalCount = Math.max(cloudCount, localKeys.length);
+                if (!confirm('Konfirmasi terakhir: hapus seluruh rekapan?\n\nData tanggal di Firebase: ' + cloudCount + '\nCache tanggal di perangkat ini: ' + localKeys.length + '\n\nSemua rekapan akan dikosongkan.')) return;
+
+                isRemoteUpdating = true;
+                // Hapus satu node rekapan agar seluruh perangkat yang sedang mendengarkan
+                // rekapan_harian/<tanggal> menerima perubahan dan membersihkan cache tanggal aktifnya.
+                await db.ref('rekapan_harian').remove();
+                localKeys.forEach(function(key) { localStorage.removeItem(key); });
+
+                // Kosongkan form yang sedang terbuka, tetapi pertahankan label tanggal.
+                var fields = Array.from(document.querySelectorAll('.save-field'));
+                fields.forEach(function(field) {
+                    if (!field.classList.contains('tgl-input')) field.value = '';
+                });
+                hitungUlang();
+                perbaruiTampilanNavigasi();
+                alert('Reset semua tanggal berhasil. Seluruh data rekapan (' + totalCount + ' entri terdeteksi) telah dihapus dari Firebase dan cache lokal perangkat ini. Perangkat lain akan menerima penghapusan melalui sinkronisasi realtime.');
+            } catch (err) {
+                console.error('Reset semua tanggal gagal:', err);
+                alert('RESET SEMUA TANGGAL GAGAL. Data tidak dinyatakan terhapus. Periksa koneksi dan izin Firebase, lalu coba lagi.');
+            } finally {
+                isRemoteUpdating = false;
+                if (tombol) { tombol.disabled = false; tombol.textContent = '⚠️ RESET SEMUA TANGGAL'; }
+            }
         }
 
         function csvEscape(value) {
