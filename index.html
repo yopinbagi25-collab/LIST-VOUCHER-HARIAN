@@ -492,6 +492,30 @@
         body.dark-mode .bg-expense-inp input { color: #fecaca !important; font-weight: bold; }
         body.dark-mode .bg-bersih-lbl { background-color: #15803d !important; color: #fff !important; font-weight: bold; }
         body.dark-mode .bg-bersih-val { background-color: #14532d !important; color: #dcfce7 !important; font-weight: bold; }
+
+        /* Tampilan khusus HP untuk ringkasan rekap bulanan */
+        @media (max-width: 700px) {
+            .modal-overlay { padding: 6px; align-items: flex-start; }
+            .modal-box { width: 100%; max-width: 100%; max-height: 96vh; padding: 12px 8px; overflow-y: auto; }
+            .modal-header { flex-direction: column; gap: 10px; padding-bottom: 10px; margin-bottom: 12px; }
+            .modal-header h3 { font-size: 16px !important; line-height: 1.4; }
+            .modal-close { width: 100%; min-height: 40px; font-size: 14px; }
+            .rekap-summary-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+            .rekap-card { padding: 10px 6px; min-width: 0; }
+            .rekap-card span { font-size: 11px; line-height: 1.3; }
+            .rekap-card strong { font-size: 17px; overflow-wrap: anywhere; }
+            .rekap-table-wrap {
+                display: block; width: 100%; max-width: 100%;
+                overflow-x: auto !important; overflow-y: visible;
+                -webkit-overflow-scrolling: touch; touch-action: pan-x;
+                border: 1px solid #475569;
+            }
+            .rekap-table { width: 1120px !important; min-width: 1120px !important; table-layout: fixed; font-size: 12px; }
+            .rekap-table th { font-size: 13px !important; line-height: 1.25; height: 82px; padding: 7px 4px !important; white-space: normal; }
+            .rekap-table td { font-size: 12px !important; padding: 8px 5px !important; white-space: nowrap; }
+            .rekap-table th:first-child, .rekap-table td:first-child { width: 75px; }
+            .rekap-table th:last-child, .rekap-table td:last-child { width: 75px; }
+        }
     </style>
 </head>
 <body id="body-main">
