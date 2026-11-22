@@ -110,11 +110,6 @@
             white-space: normal;
             transition: opacity 0.2s, transform 0.1s;
         }
-        .menu-ico {
-            font-size: 15px;
-            line-height: 1;
-            flex-shrink: 0;
-        }
         @media (max-width: 1100px) {
             .nsnet-menu { grid-template-columns: repeat(4, minmax(0, 1fr)); }
         }
@@ -187,131 +182,87 @@
             border: 1px solid #38bdf8;
         }
 
-        /* --- MODAL REKAP BULANAN 1-31 (HANYA WARNA TEKS ISI SENADA) --- */
+        /* --- MODAL REKAP BULANAN 1-31 --- */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(7, 11, 20, 0.85);
+            background: rgba(0, 0, 0, 0.75);
             z-index: 9999;
             align-items: center;
             justify-content: center;
             padding: 15px;
         }
         .modal-box {
-            background: #131b2c;
+            background: #1e2530;
             color: #f8fafc;
-            border: 1px solid #26334d;
-            border-radius: 12px;
+            border: 1px solid #475569;
+            border-radius: 10px;
             max-width: 100%;
             width: 99%;
             max-height: 97vh;
             overflow-y: auto;
             padding: 20px;
-            box-shadow: 0 12px 35px rgba(0,0,0,0.7);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             text-align: center;
         }
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #26334d;
-            padding-bottom: 14px;
-            margin-bottom: 16px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
             text-align: center;
         }
         .modal-header h3 {
             font-size: 18px !important;
-            font-weight: 800 !important;
+            font-weight: bold !important;
             text-align: center;
             width: 100%;
-            letter-spacing: 0.4px;
         }
         .modal-close {
-            background: #dc2626;
+            background: #ef4444;
             color: #fff;
             border: none;
-            border-radius: 8px;
-            padding: 8px 14px;
+            border-radius: 6px;
+            padding: 6px 12px;
             font-weight: bold;
             cursor: pointer;
-            line-height: 1.2;
-            transition: opacity 0.2s;
         }
-        .modal-close:hover { opacity: 0.88; }
         .rekap-summary-cards {
             display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 12px;
             margin-bottom: 18px;
-            background: #050b14;
-            border: 1px solid #1e293b;
-            border-radius: 14px;
-            padding: 12px;
         }
         .rekap-card {
-            background: #060d17;
-            border: 1.5px solid #0284c7;
-            padding: 14px 12px;
-            border-radius: 14px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 14px;
+            border-radius: 8px;
             text-align: center;
-            gap: 8px;
-            min-width: 0;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
         }
-        .rekap-card .rekap-card-head {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            width: 100%;
-            min-width: 0;
-        }
-        .rekap-card .rekap-card-ico {
-            font-size: 16px;
-            line-height: 1;
-            flex-shrink: 0;
-        }
-        .rekap-card .rekap-card-title {
-            font-size: 12px;
-            line-height: 1.2;
-            color: #f8fafc;
-            font-weight: 800;
+        .rekap-card span {
+            font-size: 15px;
+            color: #94a3b8;
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
             text-align: center;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         .rekap-card strong {
             font-size: 24px;
             color: #38bdf8;
-            font-weight: 800;
+            font-weight: bold;
             text-align: center;
-            width: 100%;
             display: block;
-            line-height: 1.2;
-            letter-spacing: 0.2px;
-            white-space: nowrap;
-        }
-        @media (max-width: 1200px) {
-            .rekap-summary-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-        }
-        @media (max-width: 900px) {
-            .rekap-summary-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
         .rekap-table-wrap {
             width: 100%;
             overflow-x: auto;
             overflow-y: hidden;
-            border-radius: 10px;
-            border: 1px solid #28354f;
-            background: #101726;
+            border-radius: 6px;
             -webkit-overflow-scrolling: touch;
         }
         .rekap-table {
@@ -319,108 +270,46 @@
             min-width: 0;
             table-layout: fixed;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             margin-bottom: 0;
             text-align: center;
         }
         .rekap-table th, .rekap-table td {
-            border: 1px solid #232f46;
-            padding: 6px 4px;
+            border: 1px solid #334155;
+            padding: 4px 2px;
             height: auto;
             color: #f8fafc;
             text-align: center !important;
             vertical-align: middle;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             box-sizing: border-box;
             overflow: visible;
         }
         .rekap-table th {
-            color: #ffffff;
-            font-size: 12px;
-            font-weight: 800;
+            background: #0f172a;
+            color: #38bdf8;
+            font-size: 13px;
+            font-weight: 900;
             text-align: center !important;
             white-space: normal;
-            line-height: 1.25;
+            line-height: 1.2;
             overflow-wrap: anywhere;
             word-break: normal;
-            height: 74px;
-            padding: 8px 3px;
-            border-bottom: 2px solid #0f172a;
+            height: 76px;
+            padding: 6px 2px;
         }
-        /* 12 Warna Header Kolom */
-        .rekap-table th.th-tgl { background: #0369a1; border-top-left-radius: 9px; }
-        .rekap-table th.th-v3k { background: #991b1b; }
-        .rekap-table th.th-v5k { background: #5b21b6; }
-        .rekap-table th.th-bulanan { background: #155e75; }
-        .rekap-table th.th-kotor { background: #854d0e; }
-        .rekap-table th.th-tek { background: #9f1239; }
-        .rekap-table th.th-adm { background: #86198f; }
-        .rekap-table th.th-gaji { background: #9a3412; }
-        .rekap-table th.th-diskon { background: #0f766e; }
-        .rekap-table th.th-tot-peng { background: #334155; }
-        .rekap-table th.th-bersih { background: #065f46; }
-        .rekap-table th.th-aksi { background: #3730a3; border-top-right-radius: 9px; }
-
-        .rekap-table tbody tr {
-            background: #131b2c;
-            transition: background 0.15s;
-        }
-        .rekap-table tbody tr:hover {
-            background: #19243a;
-        }
-        .rekap-table td {
-            white-space: nowrap;
-            overflow: visible;
-            font-variant-numeric: tabular-nums;
-        }
-
-        /* Kotak Isi Polos Gelap Netral; Hanya Warna Teks/Angka yang Senada Header */
-        .rekap-pill {
-            display: block;
-            width: 100%;
-            background: #1b2436;
-            border: 1px solid #334155;
-            border-radius: 6px;
-            padding: 7px 3px;
-            font-size: 12px;
-            font-weight: 800;
-            color: #e2e8f0;
-        }
-        .rekap-pill.pill-tgl { color: #38bdf8; }
-        .rekap-pill.pill-v3k { color: #f87171; }
-        .rekap-pill.pill-v5k { color: #c4b5fd; }
-        .rekap-pill.pill-bulanan { color: #22d3ee; }
-        .rekap-pill.pill-kotor { color: #facc15; }
-        .rekap-pill.pill-tek { color: #fb7185; }
-        .rekap-pill.pill-adm { color: #e879f9; }
-        .rekap-pill.pill-gaji { color: #fb923c; }
-        .rekap-pill.pill-diskon { color: #2dd4bf; }
-        .rekap-pill.pill-totpeng { color: #cbd5e1; }
-        .rekap-pill.pill-bersih { color: #34d399; }
-
-        .btn-buka-rekap {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            width: 100%;
-            background: #0284c7;
-            color: #ffffff;
-            border: none;
-            border-radius: 6px;
-            padding: 7px 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 800;
-            transition: background 0.15s, transform 0.1s;
-        }
-        .btn-buka-rekap:hover {
-            background: #0369a1;
-            transform: translateY(-1px);
-        }
+        .rekap-table td { white-space: nowrap; overflow: visible; font-variant-numeric: tabular-nums; }
+        .rekap-table th { overflow-wrap: anywhere; }
         .rekap-table-wrap { overflow-x: hidden; }
+        @media (max-width: 700px) {
+            .modal-overlay { padding: 4px; }
+            .modal-box { padding: 8px 4px; width: 100%; }
+            .rekap-table { min-width: 0; }
+            .rekap-table th { font-size: 11px; font-weight: 900; padding: 5px 1px; line-height: 1.15; height: 76px; }
+            .rekap-table td { font-size: 9px; padding: 5px 1px; }
+        }
 
         /* --- STYLING EXCEL CONTAINER (RESPONSIF & SMOOTH SCROLL) --- */
         .excel-container {
@@ -496,11 +385,13 @@
             box-shadow: inset 0 0 0 2px #1a73e8;
         }
 
+        /* Lebar khusus kolom orderan agar tidak kepotong */
         .col-orderan {
             min-width: 75px;
             width: 75px;
         }
 
+        /* Penyesuaian khusus layar HP */
         @media (max-width: 768px) {
             body {
                 padding: 8px;
@@ -566,9 +457,6 @@
 
         .bg-expense-lbl { background-color: #fee2e2 !important; color: #991b1b !important; font-weight: bold; }
         .bg-expense-inp { background-color: #fff1f2 !important; }
-
-        .bg-diskon-lbl { background-color: #ccfbf1 !important; color: #0f766e !important; font-weight: bold; }
-        .bg-diskon-val { background-color: #99f6e4 !important; color: #115e59 !important; font-weight: bold; }
         
         .bg-kotor-lbl { background-color: #fef08a !important; color: #854d0e !important; font-weight: bold; }
         .bg-kotor-val { background-color: #fef9c3 !important; color: #713f12 !important; }
@@ -602,13 +490,12 @@
         body.dark-mode .bg-expense-lbl { background-color: #991b1b !important; color: #fff !important; font-weight: bold; }
         body.dark-mode .bg-expense-inp { background-color: #450a0a !important; }
         body.dark-mode .bg-expense-inp input { color: #fecaca !important; font-weight: bold; }
-        body.dark-mode .bg-diskon-lbl { background-color: #0f766e !important; color: #fff !important; font-weight: bold; }
-        body.dark-mode .bg-diskon-val { background-color: #115e59 !important; color: #ccfbf1 !important; font-weight: bold; }
         body.dark-mode .bg-bersih-lbl { background-color: #15803d !important; color: #fff !important; font-weight: bold; }
         body.dark-mode .bg-bersih-val { background-color: #14532d !important; color: #dcfce7 !important; font-weight: bold; }
 
-        /* Tampilan khusus HP untuk ringkasan rekap bulanan (ANTI TEKS KEPOTONG) */
+        /* Tampilan khusus HP untuk ringkasan rekap bulanan */
         @media (max-width: 700px) {
+            /* HP: halaman ringkasan dapat digulir vertikal, tabel tetap dapat digeser horizontal */
             .modal-overlay {
                 padding: 6px; align-items: flex-start; justify-content: flex-start;
                 overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
@@ -619,52 +506,23 @@
                 padding: 12px 8px; overflow: visible; flex: 0 0 auto;
             }
             .modal-header { flex-direction: column; gap: 10px; padding-bottom: 10px; margin-bottom: 12px; }
-            .modal-header h3 { font-size: 15px !important; line-height: 1.35; }
+            .modal-header h3 { font-size: 16px !important; line-height: 1.4; }
             .modal-close { width: 100%; min-height: 40px; font-size: 14px; }
-            .rekap-summary-cards {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 8px;
-                margin-bottom: 12px;
-                padding: 8px;
-            }
-            .rekap-card {
-                padding: 10px 6px;
-                min-width: 0;
-                gap: 6px;
-                border-radius: 12px;
-            }
-            .rekap-card .rekap-card-head {
-                flex-wrap: wrap;
-                gap: 4px;
-            }
-            .rekap-card .rekap-card-ico {
-                font-size: 13px;
-            }
-            .rekap-card .rekap-card-title {
-                font-size: 10px;
-                line-height: 1.25;
-                white-space: normal;
-                overflow: visible;
-                text-overflow: clip;
-                word-break: break-word;
-            }
-            .rekap-card strong {
-                font-size: clamp(13px, 3.8vw, 17px);
-                line-height: 1.25;
-                white-space: nowrap;
-                overflow: visible;
-            }
+            .rekap-summary-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+            .rekap-card { padding: 10px 6px; min-width: 0; }
+            .rekap-card span { font-size: 11px; line-height: 1.3; }
+            .rekap-card strong { font-size: 17px; overflow-wrap: anywhere; }
             .rekap-table-wrap {
                 display: block; width: 100%; max-width: 100%;
                 overflow-x: auto !important; overflow-y: hidden;
                 -webkit-overflow-scrolling: touch; touch-action: auto;
                 overscroll-behavior-x: contain; border: 1px solid #475569;
             }
-            .rekap-table { width: 1280px !important; min-width: 1280px !important; table-layout: fixed; font-size: 12px; }
-            .rekap-table th { font-size: 12px !important; line-height: 1.25; height: 78px; padding: 7px 4px !important; white-space: normal; }
-            .rekap-table td { font-size: 12px !important; padding: 6px 5px !important; white-space: nowrap; }
-            .rekap-table th:first-child, .rekap-table td:first-child { width: 95px; }
-            .rekap-table th:last-child, .rekap-table td:last-child { width: 85px; }
+            .rekap-table { width: 1120px !important; min-width: 1120px !important; table-layout: fixed; font-size: 12px; }
+            .rekap-table th { font-size: 13px !important; line-height: 1.25; height: 82px; padding: 7px 4px !important; white-space: normal; }
+            .rekap-table td { font-size: 12px !important; padding: 8px 5px !important; white-space: nowrap; }
+            .rekap-table th:first-child, .rekap-table td:first-child { width: 75px; }
+            .rekap-table th:last-child, .rekap-table td:last-child { width: 75px; }
         }
     </style>
 </head>
@@ -684,15 +542,15 @@
             </div>
         </div>
         <div class="nsnet-menu">
-            <button type="button" class="nsnet-btn btn-rekap" onclick="aksesMenuAdmin(bukaRekapBulanan)"><span class="menu-ico">📊</span><span>REKAP TANGGAL 1-31</span></button>
-            <button type="button" class="nsnet-btn btn-calc" onclick="simpanDataManual()"><span class="menu-ico">💾</span><span>SIMPAN DATA</span></button>
-            <button type="button" class="nsnet-btn btn-darkmode" onclick="toggleDarkMode()"><span class="menu-ico">🌙</span><span>Dark Mode</span></button>
-            <button type="button" class="nsnet-btn btn-import" onclick="aksesMenuAdmin(importCSV)"><span class="menu-ico">📥</span><span>IMPORT CSV</span></button>
-            <button type="button" class="nsnet-btn btn-export" onclick="aksesMenuAdmin(exportCSV)"><span class="menu-ico">📤</span><span>EXPORT CSV</span></button>
-            <button type="button" class="nsnet-btn btn-backup" onclick="aksesMenuAdmin(backupJSON)"><span class="menu-ico">🗂️</span><span>BACKUP JSON</span></button>
-            <button type="button" class="nsnet-btn btn-restore" onclick="aksesMenuAdmin(restoreJSON)"><span class="menu-ico">📂</span><span>RESTORE JSON</span></button>
-            <button type="button" class="nsnet-btn btn-reset" onclick="aksesMenuAdmin(resetHariIni)"><span class="menu-ico">🗑️</span><span>RESET TANGGAL INI</span></button>
-            <button type="button" class="nsnet-btn btn-reset-all" onclick="aksesMenuAdmin(resetSemuaTanggal)"><span class="menu-ico">⚠️</span><span>RESET SEMUA TANGGAL</span></button>
+            <button type="button" class="nsnet-btn btn-rekap" onclick="aksesMenuAdmin(bukaRekapBulanan)">📊 REKAP TANGGAL 1-31</button>
+            <button type="button" class="nsnet-btn btn-calc" onclick="simpanDataManual()">💾 SIMPAN DATA</button>
+            <button type="button" class="nsnet-btn btn-darkmode" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+            <button type="button" class="nsnet-btn btn-import" onclick="aksesMenuAdmin(importCSV)">📥 IMPORT CSV</button>
+            <button type="button" class="nsnet-btn btn-export" onclick="aksesMenuAdmin(exportCSV)">📤 EXPORT CSV</button>
+            <button type="button" class="nsnet-btn btn-backup" onclick="aksesMenuAdmin(backupJSON)">💾 BACKUP JSON</button>
+            <button type="button" class="nsnet-btn btn-restore" onclick="aksesMenuAdmin(restoreJSON)">📂 RESTORE JSON</button>
+            <button type="button" class="nsnet-btn btn-reset" onclick="aksesMenuAdmin(resetHariIni)">🗑️ RESET TANGGAL INI</button>
+            <button type="button" class="nsnet-btn btn-reset-all" onclick="aksesMenuAdmin(resetSemuaTanggal)">⚠️ RESET SEMUA TANGGAL</button>
         </div>
     </div>
 
@@ -720,77 +578,32 @@
     <div class="modal-overlay" id="modal-rekap">
         <div class="modal-box">
             <div class="modal-header">
-                <h3 style="margin:0; font-size:16px;">📊 RINGKASAN REKAPITULASI TANGGAL 1 – 31 (<span id="rekap-periode-label"></span>)</h3>
+                <h3 style="margin:0; font-size:14px;">📊 RINGKASAN REKAPITULASI TANGGAL 1 – 31 (<span id="rekap-periode-label"></span>)</h3>
                 <button type="button" class="modal-close" onclick="tutupRekapBulanan()">✖ Tutup</button>
             </div>
             <div class="rekap-summary-cards">
-                <div class="rekap-card">
-                    <div class="rekap-card-head">
-                        <span class="rekap-card-ico">🎟️</span>
-                        <span class="rekap-card-title">TOTAL VOUCHER TERJUAL 3.000</span>
-                    </div>
-                    <strong id="rek-v3k" style="color:#38bdf8;">0</strong>
-                </div>
-                <div class="rekap-card">
-                    <div class="rekap-card-head">
-                        <span class="rekap-card-ico">🎫</span>
-                        <span class="rekap-card-title">TOTAL VOUCHER TERJUAL 5.000</span>
-                    </div>
-                    <strong id="rek-v5k" style="color:#c4b5fd;">0</strong>
-                </div>
-                <div class="rekap-card">
-                    <div class="rekap-card-head">
-                        <span class="rekap-card-ico">🏷️</span>
-                        <span class="rekap-card-title">TOTAL DISKON RESELLER</span>
-                    </div>
-                    <strong id="rek-diskon" style="color:#fb7185;">Rp. 0</strong>
-                </div>
-                <div class="rekap-card">
-                    <div class="rekap-card-head">
-                        <span class="rekap-card-ico">💰</span>
-                        <span class="rekap-card-title">TOTAL PENDAPATAN KOTOR</span>
-                    </div>
-                    <strong id="rek-kotor" style="color:#fbbf24;">Rp. 0</strong>
-                </div>
-                <div class="rekap-card">
-                    <div class="rekap-card-head">
-                        <span class="rekap-card-ico">💵</span>
-                        <span class="rekap-card-title">TOTAL PENDAPATAN BERSIH</span>
-                    </div>
-                    <strong id="rek-bersih" style="color:#22c55e;">Rp. 0</strong>
-                </div>
+                <div class="rekap-card"><span>TOTAL VOUCHER TERJUAL 3.000</span><strong id="rek-v3k">0 pcs</strong></div>
+                <div class="rekap-card"><span>TOTAL VOUCHER TERJUAL 5.000</span><strong id="rek-v5k">0 pcs</strong></div>
+                <div class="rekap-card"><span>TOTAL PENDAPATAN KOTOR</span><strong id="rek-kotor" style="color:#facc15;">Rp. 0</strong></div>
+                <div class="rekap-card"><span>TOTAL PENDAPATAN BERSIH</span><strong id="rek-bersih" style="color:#4ade80;">Rp. 0</strong></div>
             </div>
             <div class="rekap-table-wrap">
             <table class="rekap-table">
                 <colgroup>
-                    <col style="width:8.3%;">
-                    <col style="width:7.5%;">
-                    <col style="width:7.5%;">
-                    <col style="width:8.5%;">
-                    <col style="width:8.8%;">
-                    <col style="width:8.5%;">
-                    <col style="width:8.5%;">
                     <col style="width:8%;">
-                    <col style="width:8.5%;">
-                    <col style="width:8.8%;">
-                    <col style="width:8.8%;">
-                    <col style="width:8.3%;">
+                    <col style="width:9%;">
+                    <col style="width:9%;">
+                    <col style="width:8%;">
+                    <col style="width:10%;">
+                    <col style="width:10%;">
+                    <col style="width:10%;">
+                    <col style="width:8%;">
+                    <col style="width:10%;">
+                    <col style="width:10%;">
+                    <col style="width:8%;">
                 </colgroup>
                 <thead>
-                    <tr>
-                        <th class="th-tgl">Tanggal</th>
-                        <th class="th-v3k">Terjual<br>Voucher<br>3.000</th>
-                        <th class="th-v5k">Terjual<br>Voucher<br>5.000</th>
-                        <th class="th-bulanan">Tagihan<br>Bulanan</th>
-                        <th class="th-kotor">Pendapatan<br>Kotor</th>
-                        <th class="th-tek">Pengeluaran<br>Teknisi</th>
-                        <th class="th-adm">Pengeluaran<br>Admin</th>
-                        <th class="th-gaji">Gaji<br>Teknisi</th>
-                        <th class="th-diskon">Diskon<br>Reseller</th>
-                        <th class="th-tot-peng">Total<br>Pengeluaran</th>
-                        <th class="th-bersih">Pendapatan<br>Bersih</th>
-                        <th class="th-aksi">Aksi</th>
-                    </tr>
+                    <tr><th>Tanggal</th><th>Terjual<br>Voucher<br>3.000</th><th>Terjual<br>Voucher<br>5.000</th><th>Tagihan<br>Bulanan</th><th>Pendapatan<br>Kotor</th><th>Pengeluaran<br>Teknisi</th><th>Pengeluaran<br>Admin</th><th>Gaji<br>Teknisi</th><th>Total<br>Pengeluaran</th><th>Pendapatan<br>Bersih</th><th>Aksi</th></tr>
                 </thead>
                 <tbody id="rekap-table-body"></tbody>
             </table>
@@ -962,11 +775,10 @@
                         <td colspan="2" class="bg-titip-row"><input type="text" inputmode="numeric" class="v-titip-5k save-field reset-target"></td>
                         ${i===2?'<td colspan="4" class="bg-voucher-head">TOTAL PENDAPATAN VOUCHER</td><td colspan="6" class="calculated bg-voucher-val" id="tot-pendapatan-voucher-gabung" style="font-size:14px; font-weight:bold;">Rp. 0</td>':''}
                         ${i===3?'<td colspan="4" class="bg-kotor-lbl">TOTAL PENDAPATAN KOTOR</td><td colspan="6" class="calculated bg-kotor-val" id="tot-pendapatan-kotor" style="font-size:14px; font-weight:bold;">Rp. 0</td>':''}
-                        ${i===4?'<td colspan="4" class="bg-diskon-lbl">TOTAL DISKON RESELLER</td><td colspan="6" class="calculated bg-diskon-val" id="diskon-reseller" style="font-size:14px; font-weight:bold;">Rp. 0</td>':''}
-                        ${i===5?'<td colspan="4" class="bg-expense-lbl">TOTAL PENGELUARAN TEKNISI</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
-                        ${i===6?'<td colspan="4" class="bg-expense-lbl">TOTAL PENGELUARAN ADMIN</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-admin" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
-                        ${i===7?'<td colspan="4" class="bg-expense-lbl">TOTAL GAJI TEKNISI</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="gaji-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
-                        ${i>=8?'<td colspan="4" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>':''}
+                        ${i===4?'<td colspan="4" class="bg-expense-lbl">TOTAL PENGELUARAN TEKNISI</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
+                        ${i===5?'<td colspan="4" class="bg-expense-lbl">TOTAL PENGELUARAN ADMIN</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="pengeluaran-admin" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
+                        ${i===6?'<td colspan="4" class="bg-expense-lbl">TOTAL GAJI TEKNISI</td><td colspan="6" class="bg-expense-inp"><input type="text" inputmode="numeric" id="gaji-teknisi" class="save-field reset-target" placeholder="Rp. 0"></td>':''}
+                        ${i>=7?'<td colspan="4" class="bg-tot-row"></td><td colspan="6" class="bg-tot-row"></td>':''}
                     </tr>`);
                 }
             </script>
@@ -1001,6 +813,7 @@
         }
         const db = firebase.database();
 
+        // Periode awal mengikuti tanggal Indonesia Tengah (WITA), bukan tanggal statis.
         function tanggalHariIniWITA() {
             var parts = new Intl.DateTimeFormat('en-CA', {
                 timeZone: 'Asia/Makassar', year: 'numeric', month: '2-digit', day: '2-digit'
@@ -1025,6 +838,7 @@
             return 'Rp. ' + Number(angka || 0).toLocaleString('id-ID');
         }
 
+        // Nilai pengeluaran disimpan sebagai angka murni, sedangkan tampilan input memakai format Rupiah.
         function parseNominalRupiah(value) {
             var digits = String(value == null ? '' : value).replace(/[^0-9]/g, '');
             return digits ? Number(digits) : 0;
@@ -1075,11 +889,6 @@
             if (lblAktif) lblAktif.innerText = formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif);
         }
 
-        function hitungDiskonReseller(jual3k, jual5k) {
-            var totalVoucherTerjual = parseNominalRupiah(jual3k) + parseNominalRupiah(jual5k);
-            return totalVoucherTerjual * 1000;
-        }
-
         function hitungUlang() {
             var tabelIds = ['tbl-taluduyunu', 'tbl-hulawa', 'tbl-buntulia', 'tbl-balayo', 'tbl-paguat'];
             var totStok3k = 0, totStok5k = 0;
@@ -1120,10 +929,10 @@
                     var totKolomCell = row.querySelector('.tot-kolom');
                     var totKolomVal = 0;
                     if (ket === '3000') {
-                        totKolomVal = sumOrd * 3000;
+                        totKolomVal = sumOrd * 2000;
                         totStok3k += stokVal; totSisa3k += sisaVal; totJual3k += sumOrd;
                     } else if (ket === '5000') {
-                        totKolomVal = sumOrd * 5000;
+                        totKolomVal = sumOrd * 4000;
                         totStok5k += stokVal; totSisa5k += sisaVal; totJual5k += sumOrd;
                     } else if (ket === 'BULANAN') {
                         totKolomVal = sumOrd * 1000;
@@ -1154,8 +963,8 @@
             document.getElementById('tot-penjualan-3000').innerText = totJual3k;
             document.getElementById('tot-penjualan-5000').innerText = totJual5k;
 
-            var totalRupiahVoucher3k = totJual3k * 3000;
-            var totalRupiahVoucher5k = totJual5k * 5000;
+            var totalRupiahVoucher3k = totJual3k * 2000;
+            var totalRupiahVoucher5k = totJual5k * 4000;
             var totalPendapatanVoucherGabung = totalRupiahVoucher3k + totalRupiahVoucher5k;
             document.getElementById('tot-pendapatan-voucher-gabung').innerText = formatRupiah(totalPendapatanVoucherGabung);
 
@@ -1165,11 +974,7 @@
             var pTeknisi = parseNominalRupiah(document.getElementById('pengeluaran-teknisi').value);
             var pAdmin = parseNominalRupiah(document.getElementById('pengeluaran-admin').value);
             var gTeknisi = parseNominalRupiah(document.getElementById('gaji-teknisi').value);
-            var diskonReseller = hitungDiskonReseller(totJual3k, totJual5k);
-            var diskonEl = document.getElementById('diskon-reseller');
-            if (diskonEl) diskonEl.innerText = formatRupiah(diskonReseller);
-
-            var totalPengeluaran = pTeknisi + pAdmin + gTeknisi + diskonReseller;
+            var totalPengeluaran = pTeknisi + pAdmin + gTeknisi;
 
             var totBersih = angkaKotor - totalPengeluaran;
             document.getElementById('tot-pendapatan-bersih').innerText = formatRupiah(totBersih);
@@ -1181,16 +986,8 @@
             document.getElementById('tot-titipan-5k').innerText = sumTitip5k;
 
             return {
-                jual3k: totJual3k,
-                jual5k: totJual5k,
-                bulanan: totalPendapatanBulananSum,
-                kotor: angkaKotor,
-                diskonReseller: diskonReseller,
-                pengeluaran: totalPengeluaran,
-                pengeluaranTeknisi: pTeknisi,
-                pengeluaranAdmin: pAdmin,
-                gajiTeknisi: gTeknisi,
-                bersih: totBersih
+                jual3k: totJual3k, jual5k: totJual5k, bulanan: totalPendapatanBulananSum,
+                kotor: angkaKotor, pengeluaran: totalPengeluaran, pengeluaranTeknisi: pTeknisi, pengeluaranAdmin: pAdmin, gajiTeknisi: gTeknisi, bersih: totBersih
             };
         }
 
@@ -1205,7 +1002,6 @@
                 pengeluaranTeknisi: summary.pengeluaranTeknisi,
                 pengeluaranAdmin: summary.pengeluaranAdmin,
                 gajiTeknisi: summary.gajiTeknisi,
-                diskonReseller: summary.diskonReseller,
                 savedAt: Date.now(),
                 savedAtZone: 'Asia/Makassar'
             };
@@ -1237,6 +1033,8 @@
                 if (remoteData) {
                     localStorage.setItem(storageKey, JSON.stringify(remoteData));
                     terapkanDataKeForm(JSON.stringify(remoteData), fields, defaultTglStr);
+                } else if (saved) {
+                    // Cache lokal dipakai hanya jika cloud belum memiliki rekaman.
                 }
             }).catch(function(err) { console.warn('Gagal memuat data Firebase:', err); });
         }
@@ -1266,6 +1064,7 @@
         }
 
         function setupRealtimeListener() {
+            // Lepas listener periode sebelumnya agar data tanggal lama tidak menimpa form.
             if (activeDataRef && activeDataHandler) activeDataRef.off('value', activeDataHandler);
             var storageKey = getStorageKey(tanggalAktif, bulanAktif, tahunAktif);
             var cleanKey = storageKey.replace(/\./g, '_');
@@ -1276,12 +1075,14 @@
                 var fields = document.querySelectorAll('.save-field');
                 var defaultTglStr = formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif);
                 if (remoteData && remoteData.meta_reset === true) {
+                    // Reset dari perangkat lain: kosongkan form dan cache lokal pada semua perangkat.
                     localStorage.setItem(storageKey, JSON.stringify(remoteData));
                     terapkanDataKeForm(JSON.stringify(remoteData), fields, defaultTglStr);
                 } else if (remoteData) {
                     localStorage.setItem(storageKey, JSON.stringify(remoteData));
                     terapkanDataKeForm(JSON.stringify(remoteData), fields, defaultTglStr);
                 } else {
+                    // Data dihapus dari Firebase: jangan biarkan cache lokal lama tetap tampil.
                     localStorage.removeItem(storageKey);
                     terapkanDataKeForm(null, fields, defaultTglStr);
                 }
@@ -1312,6 +1113,7 @@
                     if (t < 1 || t > 31 || !/^\d{2}$/.test(b) || !/^\d{4}$/.test(y)) return;
                     if (t === tanggalAktif && b === bulanAktif && y === tahunAktif) return;
                     isApplyingSharedPeriod = true;
+                    // Periode bersama menjadi sumber kebenaran; jangan menyimpan form lama ke periode baru.
                     tanggalAktif = t; bulanAktif = b; tahunAktif = y;
                     document.getElementById('select-tanggal').value = String(tanggalAktif);
                     document.getElementById('select-bulan').value = bulanAktif;
@@ -1360,7 +1162,7 @@
             var namaBulan = selBulan.options[selBulan.selectedIndex].text;
             document.getElementById('rekap-periode-label').innerText = namaBulan + ' ' + tahunAktif;
 
-            var tot3k = 0, tot5k = 0, totDiskon = 0, totKotor = 0, totBersih = 0;
+            var tot3k = 0, tot5k = 0, totKotor = 0, totBersih = 0;
             var tbody = document.getElementById('rekap-table-body');
             tbody.innerHTML = '';
             var sumBulanan = 0, sumPengeluaran = 0, sumPTeknisi = 0, sumPAdmin = 0, sumGajiTeknisi = 0;
@@ -1372,7 +1174,7 @@
             for (var d = 1; d <= 31; d++) {
                 var raw = null;
                 try { raw = localStorage.getItem(getStorageKey(d, bulanAktif, tahunAktif)); } catch (e) {}
-                var s = { jual3k: 0, jual5k: 0, bulanan: 0, kotor: 0, diskonReseller: 0, pengeluaran: 0, bersih: 0 };
+                var s = { jual3k: 0, jual5k: 0, bulanan: 0, kotor: 0, pengeluaran: 0, bersih: 0 };
                 var detailRaw = null;
                 var terisi = false;
                 if (raw) {
@@ -1385,17 +1187,15 @@
                     } catch (e) { detailRaw = null; }
                 }
 
-                var j3k = parseNominalRupiah(s.jual3k || 0);
-                var j5k = parseNominalRupiah(s.jual5k || 0);
-                var bulananHari = parseNominalRupiah(s.bulanan || 0);
-                var kotorHari = (j3k * 3000) + (j5k * 5000) + bulananHari;
-                var diskonHari = hitungDiskonReseller(j3k, j5k);
+                // Semua nilai dinormalisasi sebagai angka. Mendukung data lama yang menyimpan
+                // nominal sebagai teks "Rp. 130.000" maupun data baru yang menyimpan angka.
+                tot3k += parseNominalRupiah(s.jual3k || 0);
+                tot5k += parseNominalRupiah(s.jual5k || 0);
+                sumBulanan += parseNominalRupiah(s.bulanan || 0);
+                totKotor += parseNominalRupiah(s.kotor || 0);
 
-                tot3k += j3k;
-                tot5k += j5k;
-                sumBulanan += bulananHari;
-                totKotor += kotorHari;
-
+                // Prioritas: properti khusus pada data tersimpan, lalu meta_summary,
+                // terakhir field f_index untuk kompatibilitas rekapan versi sebelumnya.
                 function ambilNominalPengeluaran(nama, nilaiSummary, indexField) {
                     if (detailRaw && detailRaw[nama] !== undefined && detailRaw[nama] !== null && detailRaw[nama] !== '')
                         return parseNominalRupiah(detailRaw[nama]);
@@ -1408,31 +1208,30 @@
                 var pTek = ambilNominalPengeluaran('pengeluaranTeknisi', s.pengeluaranTeknisi, idxPTeknisi);
                 var pAdm = ambilNominalPengeluaran('pengeluaranAdmin', s.pengeluaranAdmin, idxPAdmin);
                 var gTek = ambilNominalPengeluaran('gajiTeknisi', s.gajiTeknisi, idxGajiTeknisi);
-                var totalHariPengeluaran = pTek + pAdm + gTek + diskonHari;
-                var bersihHari = kotorHari - totalHariPengeluaran;
+                var totalHariPengeluaran = pTek + pAdm + gTek;
+                var totalHariTersimpan = parseNominalRupiah(s.pengeluaran || 0);
+                if (totalHariPengeluaran === 0 && totalHariTersimpan > 0) totalHariPengeluaran = totalHariTersimpan;
 
                 sumPTeknisi += pTek;
                 sumPAdmin += pAdm;
                 sumGajiTeknisi += gTek;
-                totDiskon += diskonHari;
                 sumPengeluaran += totalHariPengeluaran;
-                totBersih += bersihHari;
+                totBersih += parseNominalRupiah(s.bersih || 0);
 
                 var tr = document.createElement('tr');
-                tr.style.opacity = terisi ? '1' : '0.68';
+                tr.style.opacity = terisi ? '1' : '0.45';
                 tr.innerHTML = 
-                    '<td><span class="rekap-pill pill-tgl">' + pad2(d) + '/' + bulanAktif + '/' + tahunAktif + '</span></td>' +
-                    '<td><span class="rekap-pill pill-v3k">' + j3k + '</span></td>' +
-                    '<td><span class="rekap-pill pill-v5k">' + j5k + '</span></td>' +
-                    '<td><span class="rekap-pill pill-bulanan">' + formatRupiah(bulananHari) + '</span></td>' +
-                    '<td><span class="rekap-pill pill-kotor">' + formatRupiah(kotorHari) + '</span></td>' +
-                    '<td><span class="rekap-pill pill-tek">' + formatRupiah(pTek) + '</span></td>' +
-                    '<td><span class="rekap-pill pill-adm">' + formatRupiah(pAdm) + '</span></td>' +
-                    '<td><span class="rekap-pill pill-gaji">' + formatRupiah(gTek) + '</span></td>' +
-                    '<td><span class="rekap-pill pill-diskon">' + formatRupiah(diskonHari) + '</span></td>' +
-                    '<td><span class="rekap-pill pill-totpeng">' + formatRupiah(totalHariPengeluaran) + '</span></td>' +
-                    '<td><span class="rekap-pill pill-bersih">' + formatRupiah(bersihHari) + '</span></td>' +
-                    '<td><button type="button" class="btn-buka-rekap" onclick="tutupRekapBulanan(); pindahTanggal(' + d + ');">🔒 Buka</button></td>';
+                    '<td style="text-align:center; font-weight:bold; font-size:14px;"><strong>' + pad2(d) + '/' + bulanAktif + '/' + tahunAktif + '</strong></td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px;">' + (s.jual3k || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px;">' + (s.jual5k || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px;">' + formatRupiah(s.bulanan || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px;">' + formatRupiah(s.kotor || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px; color:#f87171;">' + formatRupiah(s.pengeluaranTeknisi || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px; color:#fb923c;">' + formatRupiah(s.pengeluaranAdmin || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px; color:#facc15;">' + formatRupiah(s.gajiTeknisi || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px; color:#f87171;">' + formatRupiah((s.pengeluaranTeknisi || 0)+(s.pengeluaranAdmin || 0)+(s.gajiTeknisi || 0) || s.pengeluaran || 0) + '</td>' +
+                    '<td style="text-align:center; font-weight:bold; font-size:14px; color:#4ade80;">' + formatRupiah(s.bersih || 0) + '</td>' +
+                    '<td style="text-align:center;"><button type="button" onclick="tutupRekapBulanan(); pindahTanggal(' + d + ');" style="background:#0284c7; color:#fff; border:none; border-radius:6px; padding:8px 16px; cursor:pointer; font-size:14px; font-weight:bold;">Buka</button></td>';
                 tbody.appendChild(tr);
             }
 
@@ -1440,29 +1239,30 @@
             trTot.style.background = '#0f172a';
             trTot.style.borderTop = '3px solid #38bdf8';
             trTot.innerHTML = 
-                '<td><span class="rekap-pill pill-tgl">TOTAL</span></td>' +
-                '<td><span class="rekap-pill pill-v3k">' + tot3k.toLocaleString('id-ID') + '</span></td>' +
-                '<td><span class="rekap-pill pill-v5k">' + tot5k.toLocaleString('id-ID') + '</span></td>' +
-                '<td><span class="rekap-pill pill-bulanan">' + formatRupiah(sumBulanan) + '</span></td>' +
-                '<td><span class="rekap-pill pill-kotor">' + formatRupiah(totKotor) + '</span></td>' +
-                '<td><span class="rekap-pill pill-tek">' + formatRupiah(sumPTeknisi) + '</span></td>' +
-                '<td><span class="rekap-pill pill-adm">' + formatRupiah(sumPAdmin) + '</span></td>' +
-                '<td><span class="rekap-pill pill-gaji">' + formatRupiah(sumGajiTeknisi) + '</span></td>' +
-                '<td><span class="rekap-pill pill-diskon">' + formatRupiah(totDiskon) + '</span></td>' +
-                '<td><span class="rekap-pill pill-totpeng">' + formatRupiah(sumPengeluaran) + '</span></td>' +
-                '<td><span class="rekap-pill pill-bersih">' + formatRupiah(totBersih) + '</span></td>' +
-                '<td><span class="rekap-pill pill-totpeng">-</span></td>';
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#38bdf8;">TOTAL</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#38bdf8;">' + tot3k.toLocaleString('id-ID') + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#38bdf8;">' + tot5k.toLocaleString('id-ID') + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#38bdf8;">' + formatRupiah(sumBulanan) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#facc15;">' + formatRupiah(totKotor) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#f87171;">' + formatRupiah(sumPTeknisi) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#fb923c;">' + formatRupiah(sumPAdmin) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#facc15;">' + formatRupiah(sumGajiTeknisi) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#f87171;">' + formatRupiah(sumPengeluaran) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:14px; color:#4ade80;">' + formatRupiah(totBersih) + '</td>' +
+                '<td style="text-align:center; font-weight:bold; font-size:13px; color:#94a3b8;">-</td>';
             tbody.appendChild(trTot);
 
-            document.getElementById('rek-v3k').innerText = tot3k.toLocaleString('id-ID') + ' PCS';
-            document.getElementById('rek-v5k').innerText = tot5k.toLocaleString('id-ID') + ' PCS';
-            document.getElementById('rek-diskon').innerText = formatRupiah(totDiskon);
+            document.getElementById('rek-v3k').innerText = tot3k.toLocaleString('id-ID') + ' pcs';
+            document.getElementById('rek-v5k').innerText = tot5k.toLocaleString('id-ID') + ' pcs';
             document.getElementById('rek-kotor').innerText = formatRupiah(totKotor);
             document.getElementById('rek-bersih').innerText = formatRupiah(totBersih);
 
             document.getElementById('modal-rekap').style.display = 'flex';
         }
 
+
+        // Pengunci menu administrasi: terbuka sampai halaman dimuat ulang.
+        // SIMPAN DATA dan Dark Mode sengaja tetap dapat digunakan tanpa password.
         var nsnetAdminUnlocked = false;
         function aksesMenuAdmin(aksi) {
             if (nsnetAdminUnlocked) { aksi(); return; }
@@ -1561,6 +1361,7 @@
                     var localKey = firebaseKey.replace(/_tgl_(\d{2})$/, '_tgl_$1');
                     allData[localKey] = cloud[firebaseKey];
                 });
+                // Gabungkan cache lokal yang belum sempat tersinkron.
                 try {
                     for (var i = 0; i < localStorage.length; i++) {
                         var k = localStorage.key(i);
@@ -1609,6 +1410,9 @@
         }
 
         async function resetHariIni() {
+            // Reset hanya record untuk tanggal/bulan/tahun yang sedang dipilih.
+            // Jangan menulis ulang seluruh input tanggal (.tgl-input), karena input tersebut
+            // dapat mewakili tanggal pada baris lain dan membuat tanggal lain tampak berubah.
             var targetTgl = Number(tanggalAktif);
             var targetBln = String(bulanAktif).padStart(2, '0');
             var targetThn = String(tahunAktif);
@@ -1619,12 +1423,14 @@
             var cleanKey = storageKey.replace(/\./g, '_');
             var fields = Array.from(document.querySelectorAll('.save-field'));
             var resetData = {
-                meta_summary: { jual3k:0, jual5k:0, bulanan:0, kotor:0, diskonReseller:0, pengeluaran:0, pengeluaranTeknisi:0, pengeluaranAdmin:0, gajiTeknisi:0, bersih:0 },
-                pengeluaranTeknisi: 0, pengeluaranAdmin: 0, gajiTeknisi: 0, diskonReseller: 0,
+                meta_summary: { jual3k:0, jual5k:0, bulanan:0, kotor:0, pengeluaran:0, pengeluaranTeknisi:0, pengeluaranAdmin:0, gajiTeknisi:0, bersih:0 },
+                pengeluaranTeknisi: 0, pengeluaranAdmin: 0, gajiTeknisi: 0,
                 meta_reset: true, resetAt: Date.now(), resetByZone: 'Asia/Makassar',
                 resetPeriod: { tgl: targetTgl, bln: targetBln, thn: targetThn }
             };
 
+            // Kosongkan nilai transaksi pada form aktif, tetapi pertahankan semua field tanggal
+            // apa adanya sehingga tanggal baris lain tidak ikut diganti.
             fields.forEach(function(field, index) {
                 if (!field.classList.contains('tgl-input')) field.value = '';
                 resetData['f_' + index] = field.value;
@@ -1632,6 +1438,7 @@
 
             isRemoteUpdating = true;
             try {
+                // Tulis hanya ke key spesifik tanggal terpilih; tidak menyentuh key tanggal lain.
                 await db.ref('rekapan_harian/' + cleanKey).set(resetData);
                 localStorage.setItem(storageKey, JSON.stringify(resetData));
                 hitungUlang();
@@ -1640,6 +1447,7 @@
             } catch (err) {
                 console.error('Reset Firebase gagal:', err);
                 alert('Reset dibatalkan karena penyimpanan Firebase gagal. Data tanggal lain tidak disentuh. Periksa koneksi dan izin database.');
+                // Muat kembali data target dari sumber lokal/cloud agar form tidak tertinggal dalam keadaan kosong.
                 try { await muatDataLocalDanRemote(targetTgl, targetBln, targetThn); } catch (e) {}
             } finally {
                 isRemoteUpdating = false;
@@ -1647,11 +1455,14 @@
         }
 
         async function resetSemuaTanggal() {
+            // Tindakan ini menghapus seluruh rekapan harian di Firebase dan cache lokal perangkat ini.
+            // Data pengaturan periode aktif dan preferensi tampilan tidak ikut dihapus.
             if (!confirm('PERINGATAN: Reset SEMUA TANGGAL akan menghapus seluruh data rekapan dari semua tanggal, bulan, dan tahun di Firebase. Tindakan ini tidak dapat dibatalkan.\n\nSebaiknya unduh BACKUP JSON terlebih dahulu. Lanjutkan?')) return;
 
             var tombol = document.querySelector('.btn-reset-all');
             if (tombol) { tombol.disabled = true; tombol.textContent = '⏳ SEDANG RESET...'; }
             try {
+                // Baca dahulu agar jumlah tanggal yang akan dihapus dapat dikonfirmasi.
                 var snapshot = await db.ref('rekapan_harian').once('value');
                 var cloudData = snapshot.val() || {};
                 var cloudCount = Object.keys(cloudData).length;
@@ -1664,9 +1475,12 @@
                 if (!confirm('Konfirmasi terakhir: hapus seluruh rekapan?\n\nData tanggal di Firebase: ' + cloudCount + '\nCache tanggal di perangkat ini: ' + localKeys.length + '\n\nSemua rekapan akan dikosongkan.')) return;
 
                 isRemoteUpdating = true;
+                // Hapus satu node rekapan agar seluruh perangkat yang sedang mendengarkan
+                // rekapan_harian/<tanggal> menerima perubahan dan membersihkan cache tanggal aktifnya.
                 await db.ref('rekapan_harian').remove();
                 localKeys.forEach(function(key) { localStorage.removeItem(key); });
 
+                // Kosongkan form yang sedang terbuka, tetapi pertahankan label tanggal.
                 var fields = Array.from(document.querySelectorAll('.save-field'));
                 fields.forEach(function(field) {
                     if (!field.classList.contains('tgl-input')) field.value = '';
@@ -1694,7 +1508,7 @@
             fields.forEach(function(field, index) {
                 rows.push([index, field.className, field.type || 'text', field.value]);
             });
-            var csv = '\uFEFF' + rows.map(function(row) { return row.map(csvEscape).join(','); }).join('\n');
+            var csv = '﻿' + rows.map(function(row) { return row.map(csvEscape).join(','); }).join('\n');
             var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             var url = URL.createObjectURL(blob);
             var a = document.createElement('a'); a.href = url;
@@ -1749,6 +1563,7 @@
             };
             input.click();
         }
+
     </script>
 </body>
 </html>
