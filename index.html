@@ -495,8 +495,16 @@
 
         /* Tampilan khusus HP untuk ringkasan rekap bulanan */
         @media (max-width: 700px) {
-            .modal-overlay { padding: 6px; align-items: flex-start; }
-            .modal-box { width: 100%; max-width: 100%; max-height: 96vh; padding: 12px 8px; overflow-y: auto; }
+            /* HP: halaman ringkasan dapat digulir vertikal, tabel tetap dapat digeser horizontal */
+            .modal-overlay {
+                padding: 6px; align-items: flex-start; justify-content: flex-start;
+                overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
+                touch-action: auto;
+            }
+            .modal-box {
+                width: 100%; max-width: 100%; max-height: none; height: auto;
+                padding: 12px 8px; overflow: visible; flex: 0 0 auto;
+            }
             .modal-header { flex-direction: column; gap: 10px; padding-bottom: 10px; margin-bottom: 12px; }
             .modal-header h3 { font-size: 16px !important; line-height: 1.4; }
             .modal-close { width: 100%; min-height: 40px; font-size: 14px; }
@@ -506,9 +514,9 @@
             .rekap-card strong { font-size: 17px; overflow-wrap: anywhere; }
             .rekap-table-wrap {
                 display: block; width: 100%; max-width: 100%;
-                overflow-x: auto !important; overflow-y: visible;
-                -webkit-overflow-scrolling: touch; touch-action: pan-x;
-                border: 1px solid #475569;
+                overflow-x: auto !important; overflow-y: hidden;
+                -webkit-overflow-scrolling: touch; touch-action: auto;
+                overscroll-behavior-x: contain; border: 1px solid #475569;
             }
             .rekap-table { width: 1120px !important; min-width: 1120px !important; table-layout: fixed; font-size: 12px; }
             .rekap-table th { font-size: 13px !important; line-height: 1.25; height: 82px; padding: 7px 4px !important; white-space: normal; }
