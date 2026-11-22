@@ -542,15 +542,15 @@
             </div>
         </div>
         <div class="nsnet-menu">
-            <button type="button" class="nsnet-btn btn-rekap" onclick="bukaRekapBulanan()">📊 REKAP TGL 1-31</button>
+            <button type="button" class="nsnet-btn btn-rekap" onclick="aksesMenuAdmin(bukaRekapBulanan)">📊 REKAP TANGGAL 1-31</button>
             <button type="button" class="nsnet-btn btn-calc" onclick="simpanDataManual()">💾 SIMPAN DATA</button>
             <button type="button" class="nsnet-btn btn-darkmode" onclick="toggleDarkMode()">🌙 Dark Mode</button>
-            <button type="button" class="nsnet-btn btn-import" onclick="importCSV()">📥 IMPORT CSV</button>
-            <button type="button" class="nsnet-btn btn-export" onclick="exportCSV()">📤 EXPORT CSV</button>
-            <button type="button" class="nsnet-btn btn-backup" onclick="backupJSON()">💾 BACKUP ALL JSON</button>
-            <button type="button" class="nsnet-btn btn-restore" onclick="restoreJSON()">📂 RESTORE JSON</button>
-            <button type="button" class="nsnet-btn btn-reset" onclick="resetHariIni()">🗑️ RESET TGL INI</button>
-            <button type="button" class="nsnet-btn btn-reset-all" onclick="resetSemuaTanggal()">⚠️ RESET SEMUA TANGGAL</button>
+            <button type="button" class="nsnet-btn btn-import" onclick="aksesMenuAdmin(importCSV)">📥 IMPORT CSV</button>
+            <button type="button" class="nsnet-btn btn-export" onclick="aksesMenuAdmin(exportCSV)">📤 EXPORT CSV</button>
+            <button type="button" class="nsnet-btn btn-backup" onclick="aksesMenuAdmin(backupJSON)">💾 BACKUP JSON</button>
+            <button type="button" class="nsnet-btn btn-restore" onclick="aksesMenuAdmin(restoreJSON)">📂 RESTORE JSON</button>
+            <button type="button" class="nsnet-btn btn-reset" onclick="aksesMenuAdmin(resetHariIni)">🗑️ RESET TANGGAL INI</button>
+            <button type="button" class="nsnet-btn btn-reset-all" onclick="aksesMenuAdmin(resetSemuaTanggal)">⚠️ RESET SEMUA TANGGAL</button>
         </div>
     </div>
 
@@ -1260,6 +1260,23 @@
             document.getElementById('modal-rekap').style.display = 'flex';
         }
 
+
+        // Pengunci menu administrasi: terbuka sampai halaman dimuat ulang.
+        // SIMPAN DATA dan Dark Mode sengaja tetap dapat digunakan tanpa password.
+        var nsnetAdminUnlocked = false;
+        function aksesMenuAdmin(aksi) {
+            if (nsnetAdminUnlocked) { aksi(); return; }
+            var sandi = window.prompt('MENU ADMINISTRASI NSNET BILLING\nMasukkan password untuk melanjutkan:');
+            if (sandi === null) return;
+            if (sandi === 'Terlambat1234') {
+                nsnetAdminUnlocked = true;
+                alert('Password benar. Menu administrasi terbuka sampai halaman dimuat ulang.');
+                aksi();
+            } else {
+                alert('Password salah. Akses menu administrasi ditolak.');
+            }
+        }
+
         function bukaRekapBulanan() {
             autoSaveData();
             var month = bulanAktif, year = tahunAktif;
@@ -1440,7 +1457,7 @@
         async function resetSemuaTanggal() {
             // Tindakan ini menghapus seluruh rekapan harian di Firebase dan cache lokal perangkat ini.
             // Data pengaturan periode aktif dan preferensi tampilan tidak ikut dihapus.
-            if (!confirm('PERINGATAN: Reset SEMUA TANGGAL akan menghapus seluruh data rekapan dari semua tanggal, bulan, dan tahun di Firebase. Tindakan ini tidak dapat dibatalkan.\n\nSebaiknya unduh BACKUP ALL JSON terlebih dahulu. Lanjutkan?')) return;
+            if (!confirm('PERINGATAN: Reset SEMUA TANGGAL akan menghapus seluruh data rekapan dari semua tanggal, bulan, dan tahun di Firebase. Tindakan ini tidak dapat dibatalkan.\n\nSebaiknya unduh BACKUP JSON terlebih dahulu. Lanjutkan?')) return;
 
             var tombol = document.querySelector('.btn-reset-all');
             if (tombol) { tombol.disabled = true; tombol.textContent = '⏳ SEDANG RESET...'; }
