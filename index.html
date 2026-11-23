@@ -1020,12 +1020,19 @@
         var activePeriodRef = null;
         var activePeriodHandler = null;
         var loadRequestToken = 0;
+        var firebaseWriteQueue = Promise.resolve();
 
         function formatRupiah(angka) {
             return 'Rp. ' + Number(angka || 0).toLocaleString('id-ID');
         }
 
         function parseNominalRupiah(value) {
+            var digits = String(value == null ? '' : value).replace(/[^0-9]/g, '');
+            return digits ? Number(digits) : 0;
+        }
+
+        // Jumlah voucher dan stok selalu dihitung sebagai bilangan bulat.
+        function parseJumlah(value) {
             var digits = String(value == null ? '' : value).replace(/[^0-9]/g, '');
             return digits ? Number(digits) : 0;
         }
@@ -1214,7 +1221,11 @@
                 localStorage.setItem(targetKey, JSON.stringify(data));
                 localStorage.setItem('nsnet_last_active_date', JSON.stringify(targetPeriod));
                 perbaruiTampilanNavigasi();
-                return db.ref('rekapan_harian/' + targetKey.replace(/\./g, '_')).set(data);
+                var writeTask = firebaseWriteQueue.catch(function() {}).then(function() {
+                    return db.ref('rekapan_harian/' + targetKey.replace(/\\./g, '_')).set(data);
+                });
+                firebaseWriteQueue = writeTask;
+                return writeTask;
             } catch (e) {
                 console.warn('Gagal simpan:', e);
                 return Promise.reject(e);
@@ -1228,14 +1239,15 @@
             var fields = document.querySelectorAll('.save-field');
             var defaultTglStr = formatTanggalLengkap(tgl, bln, thn);
 
-            var saved = localStorage.getItem(storageKey);
+            var saved = null;
+            try { saved = localStorage.getItem(storageKey); } catch (e) { console.warn('Cache lokal tidak dapat dibaca:', e); }
             terapkanDataKeForm(saved, fields, defaultTglStr);
 
             return db.ref('rekapan_harian/' + cleanKey).once('value').then(function(snapshot) {
                 if (requestToken !== loadRequestToken || storageKey !== getStorageKey(tanggalAktif, bulanAktif, tahunAktif)) return;
                 var remoteData = snapshot.val();
-                if (remoteData) {
-                    localStorage.setItem(storageKey, JSON.stringify(remoteData));
+                if (remoteData && typeof remoteData === 'object') {
+                    try { localStorage.setItem(storageKey, JSON.stringify(remoteData)); } catch (e) {}
                     terapkanDataKeForm(JSON.stringify(remoteData), fields, defaultTglStr);
                 }
             }).catch(function(err) { console.warn('Gagal memuat data Firebase:', err); });
@@ -1317,12 +1329,81 @@
                     document.getElementById('select-bulan').value = bulanAktif;
                     document.getElementById('select-tahun').value = tahunAktif;
                     setupRealtimeListener();
-                    muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif).finally(function(){ isApplyingSharedPeriod = false; });
+                    muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif).then(function(){ return terapkanCarryoverStok(tanggalAktif, bulanAktif, tahunAktif); }).catch(function(err){ console.warn('Carryover periode bersama gagal:', err); }).finally(function(){ isApplyingSharedPeriod = false; });
                 };
                 activePeriodRef.on('value', activePeriodHandler);
             } catch(e) {
                 console.warn("Sinkronisasi periode gagal:", e);
             }
+        }
+
+        // Ambil data tanggal tertentu dari cache lokal terlebih dahulu, lalu utamakan
+        // data Firebase jika tersedia. Struktur f_0, f_1, dan seterusnya tetap sama.
+        async function ambilDataTanggalUntukStok(tgl, bln, thn) {
+            var key = getStorageKey(tgl, bln, thn);
+            var localData = null;
+            try {
+                var raw = localStorage.getItem(key);
+                if (raw) localData = JSON.parse(raw);
+            } catch (e) { console.warn('Cache tanggal sebelumnya tidak terbaca:', e); }
+            try {
+                var snap = await db.ref('rekapan_harian/' + key.replace(/\./g, '_')).once('value');
+                var remoteData = snap.val();
+                if (remoteData && typeof remoteData === 'object') return remoteData;
+            } catch (e) {
+                console.warn('Data Firebase tanggal sebelumnya tidak terbaca; memakai cache lokal jika ada:', e);
+            }
+            return localData;
+        }
+
+        function tanggalSebelumnya(tgl, bln, thn) {
+            var d = new Date(Date.UTC(Number(thn), Number(bln) - 1, Number(tgl)));
+            d.setUTCDate(d.getUTCDate() - 1);
+            return { tgl: d.getUTCDate(), bln: pad2(d.getUTCMonth() + 1), thn: String(d.getUTCFullYear()) };
+        }
+
+        // Isi STOK VOUCHER pada tanggal terpilih dari sisa tanggal kalender sebelumnya.
+        // Kolom stok yang sudah diisi manual tidak pernah ditimpa.
+        async function terapkanCarryoverStok(tglTarget, blnTarget, thnTarget) {
+            var prev = tanggalSebelumnya(tglTarget, blnTarget, thnTarget);
+            var dataSebelumnya = await ambilDataTanggalUntukStok(prev.tgl, prev.bln, prev.thn);
+            if (!dataSebelumnya || typeof dataSebelumnya !== 'object') return 0;
+
+            var fields = Array.prototype.slice.call(document.querySelectorAll('.save-field'));
+            var jumlahTerisi = 0;
+            var tabelIds = ['tbl-taluduyunu', 'tbl-hulawa', 'tbl-buntulia', 'tbl-balayo', 'tbl-paguat'];
+
+            tabelIds.forEach(function(id) {
+                var tabel = document.getElementById(id);
+                if (!tabel) return;
+                tabel.querySelectorAll('tr.row-data').forEach(function(row) {
+                    var stokInput = row.querySelector('.stok');
+                    if (!stokInput || stokInput.value.trim() !== '') return;
+
+                    var stokIndex = fields.indexOf(stokInput);
+                    if (stokIndex < 0) return;
+                    var stokSebelumnya = parseJumlah(dataSebelumnya['f_' + stokIndex]);
+                    var totalTerjual = 0;
+                    row.querySelectorAll('.ord').forEach(function(input) {
+                        var orderIndex = fields.indexOf(input);
+                        if (orderIndex >= 0) totalTerjual += parseJumlah(dataSebelumnya['f_' + orderIndex]);
+                    });
+
+                    // Tidak meneruskan angka negatif jika penjualan tercatat melebihi stok.
+                    var sisa = Math.max(0, stokSebelumnya - totalTerjual);
+                    if (sisa > 0) {
+                        stokInput.value = String(sisa);
+                        jumlahTerisi++;
+                    }
+                });
+            });
+
+            if (jumlahTerisi > 0) {
+                hitungUlang();
+                await autoSaveData();
+                console.info('Carryover stok otomatis:', jumlahTerisi, 'kolom dari tanggal', formatTanggalLengkap(prev.tgl, prev.bln, prev.thn));
+            }
+            return jumlahTerisi;
         }
 
         async function pindahTanggal(tglBaru) {
@@ -1332,6 +1413,8 @@
             tanggalAktif = tglBaru;
             setupRealtimeListener();
             await muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
+            try { await terapkanCarryoverStok(tanggalAktif, bulanAktif, tahunAktif); }
+            catch (e) { console.warn('Pemindahan sisa stok otomatis gagal:', e); }
             simpanPeriodeAktifBersama();
         }
 
@@ -1341,6 +1424,8 @@
             tahunAktif = String(document.getElementById('select-tahun').value);
             setupRealtimeListener();
             await muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
+            try { await terapkanCarryoverStok(tanggalAktif, bulanAktif, tahunAktif); }
+            catch (e) { console.warn('Pemindahan sisa stok otomatis gagal:', e); }
             simpanPeriodeAktifBersama();
         }
 
@@ -1355,7 +1440,6 @@
         }
 
         function renderRekapBulanan() {
-            autoSaveData();
             var selBulan = document.getElementById('select-bulan');
             var namaBulan = selBulan.options[selBulan.selectedIndex].text;
             document.getElementById('rekap-periode-label').innerText = namaBulan + ' ' + tahunAktif;
@@ -1463,22 +1547,36 @@
             document.getElementById('modal-rekap').style.display = 'flex';
         }
 
-        var nsnetAdminUnlocked = false;
         function aksesMenuAdmin(aksi) {
-            if (nsnetAdminUnlocked) { aksi(); return; }
-            var sandi = window.prompt('MENU ADMINISTRASI NSNET BILLING\nMasukkan password untuk melanjutkan:');
+            if (typeof aksi !== 'function') return;
+            var sandi = window.prompt('MENU ADMINISTRASI NSNET BILLING\\nMasukkan password untuk melanjutkan:');
             if (sandi === null) return;
-            if (sandi === 'Terlambat1234') {
-                nsnetAdminUnlocked = true;
-                alert('Password benar. Menu administrasi terbuka sampai halaman dimuat ulang.');
-                aksi();
-            } else {
+            if (sandi !== 'Terlambat1234') {
                 alert('Password salah. Akses menu administrasi ditolak.');
+                return;
+            }
+            // Akses hanya berlaku untuk satu tindakan; tindakan berikutnya meminta password lagi.
+            try {
+                var hasil = aksi();
+                if (hasil && typeof hasil.catch === 'function') {
+                    hasil.catch(function(err) {
+                        console.error('Aksi administrasi gagal:', err);
+                        alert('Aksi gagal dijalankan. Periksa koneksi atau data, lalu coba lagi.');
+                    });
+                }
+            } catch (err) {
+                console.error('Aksi administrasi gagal:', err);
+                alert('Aksi gagal dijalankan. Periksa koneksi atau data, lalu coba lagi.');
             }
         }
 
-        function bukaRekapBulanan() {
-            autoSaveData();
+        async function bukaRekapBulanan() {
+            try { await autoSaveData(); }
+            catch (err) {
+                console.error('Gagal menyimpan sebelum membuka rekap:', err);
+                alert('Data tanggal aktif belum berhasil disimpan. Rekap tidak dibuka agar data tidak keliru.');
+                return;
+            }
             var month = bulanAktif, year = tahunAktif;
             var requests = [];
             for (var d = 1; d <= 31; d++) {
@@ -1524,13 +1622,20 @@
 
             perbaruiTampilanNavigasi();
             setupRealtimeListener();
-            muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
+            muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif).then(function() {
+                return terapkanCarryoverStok(tanggalAktif, bulanAktif, tahunAktif);
+            }).catch(function(err) { console.warn('Carryover stok saat membuka aplikasi gagal:', err); });
             pasangSinkronisasiPeriode();
 
             var allInputs = document.querySelectorAll('input');
             allInputs.forEach(function(input) {
-                input.addEventListener('input', autoSaveData);
-                input.addEventListener('change', autoSaveData);
+                var simpanOtomatis = function() {
+                    autoSaveData().catch(function(err) {
+                        console.warn('Simpan otomatis ke Firebase gagal:', err);
+                    });
+                };
+                input.addEventListener('input', simpanOtomatis);
+                input.addEventListener('change', simpanOtomatis);
             });
             ['pengeluaran-teknisi', 'pengeluaran-admin', 'gaji-teknisi'].forEach(function(id) {
                 var field = document.getElementById(id);
@@ -1553,9 +1658,11 @@
             try { localStorage.setItem('nsnet_darkmode', body.classList.contains('dark-mode')); } catch (e) {}
         }
 
-        function backupJSON() {
-            autoSaveData();
-            db.ref('rekapan_harian').once('value').then(function(snapshot) {
+        async function backupJSON() {
+            try {
+                await autoSaveData();
+                await firebaseWriteQueue;
+                var snapshot = await db.ref('rekapan_harian').once('value');
                 var cloud = snapshot.val() || {}, allData = {};
                 Object.keys(cloud).forEach(function(firebaseKey) {
                     var localKey = firebaseKey.replace(/_tgl_(\d{2})$/, '_tgl_$1');
@@ -1572,38 +1679,50 @@
                 a.href = url; a.download = 'backup_nsnet_all_tanggal_' + tahunAktif + '_' + bulanAktif + '.json';
                 document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
                 alert('Backup JSON selesai. Data yang tersimpan di Firebase dan cache lokal telah dimasukkan.');
-            }).catch(function(err) {
+            } catch (err) {
                 console.error(err); alert('Backup cloud gagal. Periksa koneksi Firebase, lalu coba lagi.');
-            });
+            }
         }
 
         function restoreJSON() {
             var input = document.createElement('input');
             input.type = 'file';
-            input.accept = '.json';
+            input.accept = '.json,application/json';
             input.onchange = function(e) {
-                var file = e.target.files[0];
+                var file = e.target.files && e.target.files[0];
+                if (!file) return;
                 var reader = new FileReader();
                 reader.onload = function(event) {
                     try {
                         var data = JSON.parse(event.target.result);
-                        if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Format backup tidak valid');
+                        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+                            throw new Error('Format backup tidak valid');
+                        }
+                        var validKey = /^nsnet_rekapan_v46_\\d{4}_\\d{2}_tgl_\\d{2}$/;
                         var writes = [];
-                        Object.keys(data).forEach(function(k) {
-                            if (k.indexOf('nsnet_rekapan_v46_') === 0 && data[k] && typeof data[k] === 'object') {
-                                localStorage.setItem(k, JSON.stringify(data[k]));
-                                writes.push(db.ref('rekapan_harian/' + k.replace(/\./g, '_')).set(data[k]));
+                        Object.keys(data).forEach(function(key) {
+                            var value = data[key];
+                            if (validKey.test(key) && value && typeof value === 'object' && !Array.isArray(value)) {
+                                localStorage.setItem(key, JSON.stringify(value));
+                                writes.push(db.ref('rekapan_harian/' + key).set(value));
                             }
                         });
+                        if (!writes.length) throw new Error('Tidak ada data NSNET yang valid di dalam backup.');
                         Promise.all(writes).then(function() {
-                            muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
-                            alert('Data backup berhasil direstore dan dikirim ke Firebase (' + writes.length + ' tanggal).');
-                        }).catch(function(err) { console.error(err); alert('Restore lokal selesai, tetapi sebagian data gagal dikirim ke Firebase.'); });
-                    } catch(err) {
-                        alert('❌ Gagal membaca file JSON!');
+                            return muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
+                        }).then(function() {
+                            alert('Restore berhasil. ' + writes.length + ' tanggal telah dikirim ke Firebase.');
+                        }).catch(function(err) {
+                            console.error('Restore Firebase gagal:', err);
+                            alert('Restore belum selesai. Periksa koneksi dan izin Firebase.');
+                        });
+                    } catch (err) {
+                        console.error('File backup tidak valid:', err);
+                        alert('File JSON tidak valid atau bukan backup NSNET BILLING.');
                     }
                 };
-                reader.readAsText(file);
+                reader.onerror = function() { alert('File backup tidak dapat dibaca.'); };
+                reader.readAsText(file, 'UTF-8');
             };
             input.click();
         }
@@ -1687,8 +1806,13 @@
             return '"' + String(value == null ? '' : value).replace(/"/g, '""') + '"';
         }
 
-        function exportCSV() {
-            autoSaveData();
+        async function exportCSV() {
+            try { await autoSaveData(); }
+            catch (err) {
+                console.error('Gagal menyimpan sebelum ekspor:', err);
+                alert('Data belum berhasil disimpan ke Firebase. Ekspor dibatalkan agar data tidak tertukar.');
+                return;
+            }
             var fields = Array.from(document.querySelectorAll('.save-field'));
             var rows = [['index','class','type','value']];
             fields.forEach(function(field, index) {
@@ -1727,7 +1851,7 @@
             input.onchange = function(e) {
                 var file = e.target.files && e.target.files[0]; if (!file) return;
                 var reader = new FileReader();
-                reader.onload = function(ev) {
+                reader.onload = async function(ev) {
                     try {
                         var rows = parseCSV(String(ev.target.result || ''));
                         if (rows.length < 2 || rows[0][0] !== 'index' || rows[0][3] !== 'value') {
@@ -1738,11 +1862,15 @@
                         rows.slice(1).forEach(function(row) {
                             var idx = parseInt(row[0], 10);
                             if (!Number.isInteger(idx) || idx < 0 || idx >= fields.length) return;
-                            fields[idx].value = row.slice(3).join(','); imported++;
+                            fields[idx].value = row[3] == null ? '' : row[3]; imported++;
                         });
-                        hitungUlang(); autoSaveData();
+                        hitungUlang();
+                        await autoSaveData();
                         alert('Import CSV selesai. ' + imported + ' kolom berhasil dimuat dan disimpan ke Firebase.');
-                    } catch (err) { console.error(err); alert('Gagal membaca CSV. Pastikan file tidak rusak.'); }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Gagal membaca atau menyimpan CSV. Periksa format file dan koneksi Firebase.');
+                    }
                 };
                 reader.onerror = function() { alert('File CSV tidak dapat dibaca.'); };
                 reader.readAsText(file, 'UTF-8');
