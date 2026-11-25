@@ -1222,7 +1222,7 @@
                 localStorage.setItem('nsnet_last_active_date', JSON.stringify(targetPeriod));
                 perbaruiTampilanNavigasi();
                 var writeTask = firebaseWriteQueue.catch(function() {}).then(function() {
-                    return db.ref('rekapan_harian/' + targetKey.replace(/\\./g, '_')).set(data);
+                    return db.ref('rekapan_harian/' + targetKey.replace(/\./g, '_')).set(data);
                 });
                 firebaseWriteQueue = writeTask;
                 return writeTask;
@@ -1239,18 +1239,25 @@
             var fields = document.querySelectorAll('.save-field');
             var defaultTglStr = formatTanggalLengkap(tgl, bln, thn);
 
-            var saved = null;
-            try { saved = localStorage.getItem(storageKey); } catch (e) { console.warn('Cache lokal tidak dapat dibaca:', e); }
-            terapkanDataKeForm(saved, fields, defaultTglStr);
+            var localData = null;
+            try {
+                var saved = localStorage.getItem(storageKey);
+                if (saved) localData = JSON.parse(saved);
+            } catch (e) { console.warn('Cache lokal tidak dapat dibaca:', e); }
+            if (localData) terapkanDataKeForm(JSON.stringify(localData), fields, defaultTglStr);
+            else terapkanDataKeForm(null, fields, defaultTglStr);
 
             return db.ref('rekapan_harian/' + cleanKey).once('value').then(function(snapshot) {
                 if (requestToken !== loadRequestToken || storageKey !== getStorageKey(tanggalAktif, bulanAktif, tahunAktif)) return;
                 var remoteData = snapshot.val();
-                if (remoteData && typeof remoteData === 'object') {
-                    try { localStorage.setItem(storageKey, JSON.stringify(remoteData)); } catch (e) {}
-                    terapkanDataKeForm(JSON.stringify(remoteData), fields, defaultTglStr);
-                }
-            }).catch(function(err) { console.warn('Gagal memuat data Firebase:', err); });
+                if (!remoteData || typeof remoteData !== 'object') return;
+                var localTime = Number(localData && localData.savedAt) || 0;
+                var remoteTime = Number(remoteData.savedAt) || 0;
+                // Jangan biarkan snapshot Firebase yang lebih lama menimpa cache lokal terbaru.
+                var chosen = (localData && localTime > remoteTime) ? localData : remoteData;
+                try { localStorage.setItem(storageKey, JSON.stringify(chosen)); } catch (e) {}
+                terapkanDataKeForm(JSON.stringify(chosen), fields, defaultTglStr);
+            }).catch(function(err) { console.warn('Gagal memuat data Firebase; cache lokal dipertahankan:', err); });
         }
 
         function terapkanDataKeForm(rawJson, fields, defaultTglStr) {
@@ -1287,15 +1294,18 @@
                 var remoteData = snapshot.val();
                 var fields = document.querySelectorAll('.save-field');
                 var defaultTglStr = formatTanggalLengkap(tanggalAktif, bulanAktif, tahunAktif);
-                if (remoteData && remoteData.meta_reset === true) {
-                    localStorage.setItem(storageKey, JSON.stringify(remoteData));
-                    terapkanDataKeForm(JSON.stringify(remoteData), fields, defaultTglStr);
-                } else if (remoteData) {
-                    localStorage.setItem(storageKey, JSON.stringify(remoteData));
-                    terapkanDataKeForm(JSON.stringify(remoteData), fields, defaultTglStr);
+                if (remoteData && typeof remoteData === 'object') {
+                    var localData = null;
+                    try { var localRaw = localStorage.getItem(storageKey); if (localRaw) localData = JSON.parse(localRaw); } catch (e) {}
+                    var localTime = Number(localData && localData.savedAt) || 0;
+                    var remoteTime = Number(remoteData.savedAt) || 0;
+                    if (!localData || remoteTime >= localTime) {
+                        localStorage.setItem(storageKey, JSON.stringify(remoteData));
+                        terapkanDataKeForm(JSON.stringify(remoteData), fields, defaultTglStr);
+                    }
                 } else {
-                    localStorage.removeItem(storageKey);
-                    terapkanDataKeForm(null, fields, defaultTglStr);
+                    // Snapshot kosong tidak menghapus data lokal yang mungkin belum tersinkron.
+                    if (!localStorage.getItem(storageKey)) terapkanDataKeForm(null, fields, defaultTglStr);
                 }
             };
             activeDataRef.on('value', activeDataHandler);
@@ -1346,14 +1356,25 @@
                 var raw = localStorage.getItem(key);
                 if (raw) localData = JSON.parse(raw);
             } catch (e) { console.warn('Cache tanggal sebelumnya tidak terbaca:', e); }
+
+            var remoteData = null;
             try {
                 var snap = await db.ref('rekapan_harian/' + key.replace(/\./g, '_')).once('value');
-                var remoteData = snap.val();
-                if (remoteData && typeof remoteData === 'object') return remoteData;
+                remoteData = snap.val();
             } catch (e) {
                 console.warn('Data Firebase tanggal sebelumnya tidak terbaca; memakai cache lokal jika ada:', e);
             }
-            return localData;
+
+            // Pilih data dengan savedAt terbaru. Jika waktunya sama, utamakan
+            // cache lokal karena cache ditulis langsung saat pengguna mengetik.
+            if (localData && typeof localData === 'object' && remoteData && typeof remoteData === 'object') {
+                var waktuLokal = Number(localData.savedAt) || 0;
+                var waktuFirebase = Number(remoteData.savedAt) || 0;
+                return waktuLokal >= waktuFirebase ? localData : remoteData;
+            }
+            if (localData && typeof localData === 'object') return localData;
+            if (remoteData && typeof remoteData === 'object') return remoteData;
+            return null;
         }
 
         function tanggalSebelumnya(tgl, bln, thn) {
@@ -1362,48 +1383,108 @@
             return { tgl: d.getUTCDate(), bln: pad2(d.getUTCMonth() + 1), thn: String(d.getUTCFullYear()) };
         }
 
-        // Isi STOK VOUCHER pada tanggal terpilih dari sisa tanggal kalender sebelumnya.
-        // Kolom stok yang sudah diisi manual tidak pernah ditimpa.
+        // Sinkronkan stok berantai untuk SELURUH tanggal 1-31 dalam bulan aktif.
+        // Tanggal 01 adalah stok awal yang dimasukkan pengguna. Stok tanggal 02-31
+        // selalu dihitung dari sisa tanggal sebelumnya, bukan dari nilai lama yang tersimpan.
         async function terapkanCarryoverStok(tglTarget, blnTarget, thnTarget) {
-            var prev = tanggalSebelumnya(tglTarget, blnTarget, thnTarget);
-            var dataSebelumnya = await ambilDataTanggalUntukStok(prev.tgl, prev.bln, prev.thn);
-            if (!dataSebelumnya || typeof dataSebelumnya !== 'object') return 0;
-
             var fields = Array.prototype.slice.call(document.querySelectorAll('.save-field'));
-            var jumlahTerisi = 0;
             var tabelIds = ['tbl-taluduyunu', 'tbl-hulawa', 'tbl-buntulia', 'tbl-balayo', 'tbl-paguat'];
+            var barisStok = [];
 
+            // Identifikasi pasangan stok dan kolom order dengan indeks field yang konsisten.
             tabelIds.forEach(function(id) {
                 var tabel = document.getElementById(id);
                 if (!tabel) return;
                 tabel.querySelectorAll('tr.row-data').forEach(function(row) {
                     var stokInput = row.querySelector('.stok');
-                    if (!stokInput || stokInput.value.trim() !== '') return;
-
+                    if (!stokInput) return;
                     var stokIndex = fields.indexOf(stokInput);
-                    if (stokIndex < 0) return;
-                    var stokSebelumnya = parseJumlah(dataSebelumnya['f_' + stokIndex]);
-                    var totalTerjual = 0;
-                    row.querySelectorAll('.ord').forEach(function(input) {
-                        var orderIndex = fields.indexOf(input);
-                        if (orderIndex >= 0) totalTerjual += parseJumlah(dataSebelumnya['f_' + orderIndex]);
-                    });
-
-                    // Tidak meneruskan angka negatif jika penjualan tercatat melebihi stok.
-                    var sisa = Math.max(0, stokSebelumnya - totalTerjual);
-                    if (sisa > 0) {
-                        stokInput.value = String(sisa);
-                        jumlahTerisi++;
-                    }
+                    var orderIndexes = Array.prototype.map.call(row.querySelectorAll('.ord'), function(input) {
+                        return fields.indexOf(input);
+                    }).filter(function(index) { return index >= 0; });
+                    if (stokIndex >= 0) barisStok.push({ stokIndex: stokIndex, orderIndexes: orderIndexes });
                 });
             });
+            if (!barisStok.length) return 0;
 
-            if (jumlahTerisi > 0) {
-                hitungUlang();
-                await autoSaveData();
-                console.info('Carryover stok otomatis:', jumlahTerisi, 'kolom dari tanggal', formatTanggalLengkap(prev.tgl, prev.bln, prev.thn));
+            var bulan = Number(blnTarget);
+            var tahun = Number(thnTarget);
+            var jumlahHari = new Date(Date.UTC(tahun, bulan, 0)).getUTCDate();
+            if (!Number.isInteger(tahun) || tahun < 2020 || tahun > 2040 || bulan < 1 || bulan > 12) {
+                console.warn('Periode carryover di luar rentang tanggal yang didukung:', blnTarget, thnTarget);
+                return 0;
             }
-            return jumlahTerisi;
+
+            // Ambil hanya tanggal yang benar-benar ada pada bulan/tahun terpilih.
+            // Dengan demikian Februari tidak membuat tanggal 29-31 fiktif, dan
+            // tahun kabisat (misalnya 2020, 2024, 2028...) otomatis dihitung benar.
+            var dataHarian = {};
+            for (var hari = 1; hari <= jumlahHari; hari++) {
+                dataHarian[hari] = await ambilDataTanggalUntukStok(hari, pad2(bulan), String(tahun)) || {};
+            }
+
+            // Tanggal 01 adalah stok awal manual. Sisa hari pertama menjadi stok
+            // awal tanggal 02, lalu rantai diteruskan sampai hari terakhir bulan itu.
+            var sisaBerjalan = barisStok.map(function(item) {
+                var dataAwal = dataHarian[1] || {};
+                var stokAwal = parseJumlah(dataAwal['f_' + item.stokIndex]);
+                var totalOrder = item.orderIndexes.reduce(function(total, index) {
+                    return total + parseJumlah(dataAwal['f_' + index]);
+                }, 0);
+                return Math.max(0, stokAwal - totalOrder);
+            });
+
+            var jumlahPerubahan = 0;
+            for (var d = 2; d <= jumlahHari; d++) {
+                var dataHariIni = dataHarian[d] || {};
+                var keyHariIni = getStorageKey(d, pad2(bulan), String(tahun));
+                var keySebelumnya = getStorageKey(d - 1, pad2(bulan), String(tahun));
+                var berubah = false;
+
+                barisStok.forEach(function(item, posisi) {
+                    // Reset manual pada tanggal ini memutus rantai untuk baris terkait.
+                    if (dataHariIni.meta_reset === true) {
+                        sisaBerjalan[posisi] = 0;
+                        return;
+                    }
+                    var stokCarry = sisaBerjalan[posisi];
+                    var nilaiBaru = String(stokCarry);
+                    var nilaiLama = dataHariIni['f_' + item.stokIndex];
+                    if (String(nilaiLama == null ? '' : nilaiLama).trim() !== nilaiBaru) {
+                        dataHariIni['f_' + item.stokIndex] = nilaiBaru;
+                        berubah = true;
+                        jumlahPerubahan++;
+                    }
+                    var totalOrderHariIni = item.orderIndexes.reduce(function(total, index) {
+                        return total + parseJumlah(dataHariIni['f_' + index]);
+                    }, 0);
+                    sisaBerjalan[posisi] = Math.max(0, stokCarry - totalOrderHariIni);
+                });
+
+                if (berubah) {
+                    dataHariIni.meta_carryover_from = keySebelumnya;
+                    dataHariIni.meta_carryover_at = Date.now();
+                    dataHariIni.savedAt = Date.now();
+                    dataHariIni.savedAtZone = 'Asia/Makassar';
+                    dataHarian[d] = dataHariIni;
+                    localStorage.setItem(keyHariIni, JSON.stringify(dataHariIni));
+                    // Antrekan penulisan supaya urutan tanggal tidak saling mendahului.
+                    var write = (function(key, payload) {
+                        return function() { return db.ref('rekapan_harian/' + key.replace(/\./g, '_')).set(payload); };
+                    })(keyHariIni, JSON.parse(JSON.stringify(dataHariIni)));
+                    firebaseWriteQueue = firebaseWriteQueue.catch(function() {}).then(write);
+                    try { await firebaseWriteQueue; }
+                    catch (e) { console.warn('Gagal menyinkronkan carryover tanggal ' + d + ':', e); }
+                }
+            }
+
+            // Refresh tampilan tanggal aktif dari snapshot periode yang sudah dihitung.
+            var hariAktif = Number(tglTarget);
+            if (dataHarian[hariAktif] && getStorageKey(hariAktif, pad2(bulan), String(tahun)) === getStorageKey(tanggalAktif, bulanAktif, tahunAktif)) {
+                terapkanDataKeForm(JSON.stringify(dataHarian[hariAktif]), fields, formatTanggalLengkap(hariAktif, pad2(bulan), String(tahun)));
+            }
+            console.info('Carryover stok selesai untuk ' + pad2(bulan) + '/' + tahun + ' (tanggal 01-' + pad2(jumlahHari) + '). Perubahan:', jumlahPerubahan);
+            return jumlahPerubahan;
         }
 
         async function pindahTanggal(tglBaru) {
@@ -1422,6 +1503,15 @@
             try { await autoSaveData(); } catch(e) { alert('Data sebelumnya belum berhasil disimpan. Periksa koneksi Firebase.'); return; }
             bulanAktif = String(document.getElementById('select-bulan').value).padStart(2, '0');
             tahunAktif = String(document.getElementById('select-tahun').value);
+            var batasHari = new Date(Date.UTC(Number(tahunAktif), Number(bulanAktif), 0)).getUTCDate();
+            var pilihTanggal = document.getElementById('select-tanggal');
+            Array.prototype.forEach.call(pilihTanggal.options, function(option) {
+                option.disabled = Number(option.value) > batasHari;
+            });
+            if (tanggalAktif > batasHari) {
+                tanggalAktif = batasHari;
+                pilihTanggal.value = String(tanggalAktif);
+            }
             setupRealtimeListener();
             await muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif);
             try { await terapkanCarryoverStok(tanggalAktif, bulanAktif, tahunAktif); }
@@ -1619,6 +1709,9 @@
             if (selTanggal) selTanggal.value = String(tanggalAktif);
             if (selBulan) selBulan.value = bulanAktif;
             if (selTahun) selTahun.value = tahunAktif;
+            var hariMaksAwal = new Date(Date.UTC(Number(tahunAktif), Number(bulanAktif), 0)).getUTCDate();
+            if (selTanggal) Array.prototype.forEach.call(selTanggal.options, function(option) { option.disabled = Number(option.value) > hariMaksAwal; });
+            if (tanggalAktif > hariMaksAwal) tanggalAktif = hariMaksAwal;
 
             perbaruiTampilanNavigasi();
             setupRealtimeListener();
@@ -1698,7 +1791,7 @@
                         if (!data || typeof data !== 'object' || Array.isArray(data)) {
                             throw new Error('Format backup tidak valid');
                         }
-                        var validKey = /^nsnet_rekapan_v46_\\d{4}_\\d{2}_tgl_\\d{2}$/;
+                        var validKey = /^nsnet_rekapan_v46_\d{4}_\d{2}_tgl_\d{2}$/;
                         var writes = [];
                         Object.keys(data).forEach(function(key) {
                             var value = data[key];
