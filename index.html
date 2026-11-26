@@ -836,7 +836,7 @@
                     } else {
                         html += `<td class="calculated" style="color: #94a3b8;">-</td>`;
                     }
-                    html += `<td class="calculated sisa">0</td>`;
+                    html += `<td class="calculated sisa"></td>`;
                     
                     for(let c=0; c<10; c++) {
                         html += `<td class="col-orderan"><input type="text" inputmode="numeric" value="" class="ord save-field reset-target" style="font-size:14px; font-weight:bold;"></td>`;
@@ -1103,7 +1103,12 @@
                 rows.forEach(function(row) {
                     var ket = row.querySelector('.ket') ? row.querySelector('.ket').value.trim() : '';
                     var stokInput = row.querySelector('.stok');
-                    var stokVal = stokInput && stokInput.value !== '' ? parseFloat(stokInput.value) : 0;
+                    // Nilai nol pada kolom stok ditampilkan sebagai kosong agar tabel lebih bersih.
+                    // Kosong tetap dihitung sebagai 0 sehingga rumus dan rekap tidak berubah.
+                    var stokVal = stokInput ? parseJumlah(stokInput.value) : 0;
+                    if (stokInput && String(stokInput.value || '').trim() !== '' && stokVal === 0) {
+                        stokInput.value = '';
+                    }
                     
                     var ordInputs = row.querySelectorAll('.ord');
                     var sumOrd = 0;
@@ -1119,7 +1124,8 @@
                     } else {
                         var sisaVal = stokVal - sumOrd;
                         if (sisaCell) {
-                            sisaCell.innerText = sisaVal;
+                            // Sisa 0 dikosongkan secara visual; nilai perhitungan tetap 0.
+                            sisaCell.innerText = sisaVal === 0 ? '' : sisaVal;
                             sisaCell.style.color = sisaVal < 0 ? '#dc2626' : '';
                         }
                     }
@@ -1448,9 +1454,15 @@
                         return;
                     }
                     var stokCarry = sisaBerjalan[posisi];
-                    var nilaiBaru = String(stokCarry);
+                    // Jangan simpan angka 0 ke kolom STOK VOUCHER. Nilai kosong
+                    // tetap dibaca sebagai nol oleh parseJumlah() pada semua rumus.
+                    var nilaiBaru = stokCarry > 0 ? String(stokCarry) : '';
                     var nilaiLama = dataHariIni['f_' + item.stokIndex];
-                    if (String(nilaiLama == null ? '' : nilaiLama).trim() !== nilaiBaru) {
+                    var nilaiLamaNormal = String(nilaiLama == null ? '' : nilaiLama).trim();
+                    var perluPerbarui = stokCarry === 0
+                        ? nilaiLamaNormal !== ''
+                        : parseJumlah(nilaiLama) !== stokCarry || nilaiLamaNormal !== nilaiBaru;
+                    if (perluPerbarui) {
                         dataHariIni['f_' + item.stokIndex] = nilaiBaru;
                         berubah = true;
                         jumlahPerubahan++;
@@ -1543,7 +1555,8 @@
             var idxPAdmin = saveFieldsForIndex.findIndex(function(el){ return el.id === 'pengeluaran-admin'; });
             var idxGajiTeknisi = saveFieldsForIndex.findIndex(function(el){ return el.id === 'gaji-teknisi'; });
 
-            for (var d = 1; d <= 31; d++) {
+            var jumlahHariRekap = new Date(Date.UTC(Number(tahunAktif), Number(bulanAktif), 0)).getUTCDate();
+            for (var d = 1; d <= jumlahHariRekap; d++) {
                 var raw = null;
                 try { raw = localStorage.getItem(getStorageKey(d, bulanAktif, tahunAktif)); } catch (e) {}
                 var s = { jual3k: 0, jual5k: 0, bulanan: 0, kotor: 0, diskonReseller: 0, pengeluaran: 0, bersih: 0 };
@@ -1669,12 +1682,22 @@
             }
             var month = bulanAktif, year = tahunAktif;
             var requests = [];
-            for (var d = 1; d <= 31; d++) {
+            var jumlahHariBulan = new Date(Date.UTC(Number(year), Number(month), 0)).getUTCDate();
+            for (var d = 1; d <= jumlahHariBulan; d++) {
                 var key = getStorageKey(d, month, year);
                 (function(localKey, firebaseKey) {
                     requests.push(db.ref('rekapan_harian/' + firebaseKey).once('value').then(function(snapshot) {
                         var value = snapshot.val();
-                        if (value) { try { localStorage.setItem(localKey, JSON.stringify(value)); } catch(e) {} }
+                        if (!value || typeof value !== 'object') return;
+                        var localValue = null;
+                        try {
+                            var localRaw = localStorage.getItem(localKey);
+                            if (localRaw) localValue = JSON.parse(localRaw);
+                        } catch(e) {}
+                        var localTime = Number(localValue && localValue.savedAt) || 0;
+                        var remoteTime = Number(value.savedAt) || 0;
+                        var chosen = localValue && localTime > remoteTime ? localValue : value;
+                        try { localStorage.setItem(localKey, JSON.stringify(chosen)); } catch(e) {}
                     }).catch(function(err) { console.warn('Rekap cloud tidak terbaca:', err); }));
                 })(key, key.replace(/\./g, '_'));
             }
