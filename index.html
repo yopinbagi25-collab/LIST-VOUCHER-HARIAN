@@ -1036,6 +1036,67 @@
         var loadRequestToken = 0;
         var firebaseWriteQueue = Promise.resolve();
         var lastSavedTimestampByKey = {};
+        var globalRekapanRef = null;
+        var globalRekapanHandler = null;
+        var globalCloudKeys = {};
+        var globalSnapshotReady = false;
+
+        // Listener global agar semua tanggal di cache lokal mengikuti Firebase.
+        // Perubahan/hapus dari PC langsung tercermin di HP dan sebaliknya.
+        function pasangSinkronisasiSemuaRekapan() {
+            if (globalRekapanRef && globalRekapanHandler) {
+                globalRekapanRef.off('value', globalRekapanHandler);
+            }
+            globalRekapanRef = db.ref('rekapan_harian');
+            globalRekapanHandler = function(snapshot) {
+                var cloud = snapshot.val() || {};
+                var nextKeys = {};
+                Object.keys(cloud).forEach(function(firebaseKey) {
+                    var value = cloud[firebaseKey];
+                    if (!value || typeof value !== 'object') return;
+                    nextKeys[firebaseKey] = true;
+                    var localKey = firebaseKey.replace(/_tgl_(\d{2})$/, '_tgl_$1');
+                    try { localStorage.setItem(localKey, JSON.stringify(value)); } catch (e) {}
+                });
+
+                if (globalSnapshotReady) {
+                    Object.keys(globalCloudKeys).forEach(function(firebaseKey) {
+                        if (!nextKeys[firebaseKey]) {
+                            var removedLocalKey = firebaseKey.replace(/_tgl_(\d{2})$/, '_tgl_$1');
+                            try { localStorage.removeItem(removedLocalKey); } catch (e) {}
+                        }
+                    });
+
+                    // Jika seluruh node rekapan dihapus dari perangkat lain,
+                    // kosongkan form aktif dan cache tanggal yang telah dihapus.
+                    if (Object.keys(globalCloudKeys).length > 0 && Object.keys(nextKeys).length === 0) {
+                        lastSavedTimestampByKey = {};
+                        if (!isUserTyping) {
+                            var activeKey = getStorageKey(tanggalAktif, bulanAktif, tahunAktif);
+                            try { localStorage.removeItem(activeKey); } catch (e) {}
+                            Array.from(document.querySelectorAll('.save-field')).forEach(function(field) {
+                                if (!field.classList.contains('tgl-input')) field.value = '';
+                            });
+                            hitungUlang();
+                            perbaruiTampilanNavigasi();
+                            setSyncBadge('', '☁️ Semua data direset');
+                        }
+                    }
+                }
+                globalCloudKeys = nextKeys;
+                globalSnapshotReady = true;
+
+                var modal = document.getElementById('modal-rekap');
+                if (modal && modal.style.display !== 'none' && typeof renderRekapBulanan === 'function') {
+                    renderRekapBulanan();
+                }
+            };
+            globalRekapanRef.on('value', globalRekapanHandler, function(err) {
+                console.warn('Sinkronisasi seluruh rekapan gagal:', err);
+                setSyncBadge('error', '⚠️ Firebase bermasalah');
+            });
+        }
+
 
         function setSyncBadge(state, text) {
             var badge = document.getElementById('sync-status-badge');
@@ -1766,7 +1827,7 @@
                         } catch(e) {}
                         var localTime = Number(localValue && localValue.savedAt) || 0;
                         var remoteTime = Number(value.savedAt) || 0;
-                        var chosen = localValue && localTime > remoteTime ? localValue : value;
+                        var chosen = value; // Firebase adalah sumber data bersama; cache lokal tidak menimpa data cloud.
                         try { localStorage.setItem(localKey, JSON.stringify(chosen)); } catch(e) {}
                     }).catch(function(err) { console.warn('Rekap cloud tidak terbaca:', err); }));
                 })(key, key.replace(/\./g, '_'));
@@ -1807,6 +1868,7 @@
             if (tanggalAktif > hariMaksAwal) tanggalAktif = hariMaksAwal;
 
             perbaruiTampilanNavigasi();
+            pasangSinkronisasiSemuaRekapan();
             setupRealtimeListener();
             muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif).catch(function(err) {
                 console.warn('Gagal memuat data tanggal aktif:', err);
