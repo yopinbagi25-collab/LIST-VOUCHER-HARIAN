@@ -1004,6 +1004,10 @@
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
+        db.ref('.info/connected').on('value', function(snapshot) {
+            if (snapshot.val() === true) setSyncBadge('', '☁️ Terhubung ke Firebase');
+            else setSyncBadge('error', '⚠️ Menunggu koneksi Firebase');
+        });
 
         function tanggalHariIniWITA() {
             var parts = new Intl.DateTimeFormat('en-CA', {
@@ -1335,15 +1339,10 @@
                     return;
                 }
 
-                var localTime = Math.max(Number(localData && localData.savedAt) || 0, Number(lastSavedTimestampByKey[storageKey]) || 0);
-                var remoteTime = Number(remoteData.savedAt) || 0;
-
-                if (localData && dataMemilikiIsi(localData) && !dataMemilikiIsi(remoteData) && !remoteData.meta_reset) {
-                    db.ref('rekapan_harian/' + cleanKey).set(localData).catch(function() {});
-                    return;
-                }
-
-                var chosen = (localData && localTime > remoteTime) ? localData : remoteData;
+                // Remote Firebase data is authoritative across PC and HP.
+                // Local data is uploaded only when no remote record exists (handled above).
+                var chosen = remoteData;
+                lastSavedTimestampByKey[storageKey] = Number(chosen.savedAt) || Date.now();
                 try { localStorage.setItem(storageKey, JSON.stringify(chosen)); } catch (e) {}
                 terapkanDataKeForm(chosen, fields, defaultTglStr);
                 setSyncBadge('', '☁️ Tersinkron');
@@ -1384,9 +1383,20 @@
             var storageKey = getStorageKey(tanggalAktif, bulanAktif, tahunAktif);
             var cleanKey = storageKey.replace(/\./g, '_');
             activeDataRef = db.ref('rekapan_harian/' + cleanKey);
+            var pendingDataTimer = null;
 
             activeDataHandler = function(snapshot) {
-                if (isRemoteUpdating || isUserTyping || autoSaveDebounceTimer !== null) return;
+                if (isRemoteUpdating) return;
+                if (isUserTyping || autoSaveDebounceTimer !== null) {
+                    if (pendingDataTimer) clearTimeout(pendingDataTimer);
+                    pendingDataTimer = setTimeout(function() {
+                        pendingDataTimer = null;
+                        if (!isUserTyping && autoSaveDebounceTimer === null && storageKey === getStorageKey(tanggalAktif, bulanAktif, tahunAktif)) {
+                            activeDataHandler(snapshot);
+                        }
+                    }, 1800);
+                    return;
+                }
                 if (storageKey !== getStorageKey(tanggalAktif, bulanAktif, tahunAktif)) return;
 
                 var remoteData = snapshot.val();
@@ -1399,19 +1409,11 @@
                     if (localRaw) localData = JSON.parse(localRaw);
                 } catch (e) {}
 
-                var localTime = Math.max(Number(localData && localData.savedAt) || 0, Number(lastSavedTimestampByKey[storageKey]) || 0);
-
                 if (remoteData && typeof remoteData === 'object') {
-                    var remoteTime = Number(remoteData.savedAt) || 0;
-
-                    if (localData && localTime >= remoteTime) {
-                        return;
-                    }
-                    if (localData && dataMemilikiIsi(localData) && !dataMemilikiIsi(remoteData) && !remoteData.meta_reset) {
-                        return;
-                    }
-
+                    // Firebase is the shared source of truth. A local cache timestamp must
+                    // never block a newer snapshot arriving from another device.
                     try { localStorage.setItem(storageKey, JSON.stringify(remoteData)); } catch (e) {}
+                    lastSavedTimestampByKey[storageKey] = Number(remoteData.savedAt) || Date.now();
                     terapkanDataKeForm(remoteData, fields, defaultTglStr);
                     setSyncBadge('', '☁️ Tersinkron');
                 }
@@ -1433,34 +1435,58 @@
                 if (activePeriodRef && activePeriodHandler) activePeriodRef.off('value', activePeriodHandler);
                 activePeriodRef = db.ref('pengaturan/periode_aktif');
                 var initialPeriodCheckDone = false;
+                var pendingPeriodTimer = null;
+
+                function terapkanPeriode(remote) {
+                    if (!remote || !remote.tgl || !remote.bln || !remote.thn) return;
+                    var t = parseInt(remote.tgl, 10), b = String(remote.bln).padStart(2, '0'), y = String(remote.thn);
+                    if (t < 1 || t > 31 || !/^\d{2}$/.test(b) || !/^\d{4}$/.test(y)) return;
+                    var maxHari = new Date(Date.UTC(Number(y), Number(b), 0)).getUTCDate();
+                    if (t > maxHari) return;
+                    if (t === tanggalAktif && b === bulanAktif && y === tahunAktif) return;
+
+                    isApplyingSharedPeriod = true;
+                    tanggalAktif = t; bulanAktif = b; tahunAktif = y;
+                    document.getElementById('select-tanggal').value = String(t);
+                    document.getElementById('select-bulan').value = b;
+                    document.getElementById('select-tahun').value = y;
+                    try { localStorage.setItem('nsnet_last_active_date', JSON.stringify({ tgl: t, bln: b, thn: y, updatedAt: Number(remote.updatedAt) || Date.now() })); } catch (e) {}
+                    Array.prototype.forEach.call(document.getElementById('select-tanggal').options, function(option) {
+                        option.disabled = Number(option.value) > maxHari;
+                    });
+                    setupRealtimeListener();
+                    muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif).finally(function() {
+                        isApplyingSharedPeriod = false;
+                    });
+                }
 
                 activePeriodHandler = function(snapshot) {
                     var remote = snapshot.val();
                     if (!initialPeriodCheckDone) {
                         initialPeriodCheckDone = true;
-                        simpanPeriodeAktifBersama();
+                        // First device creates the shared period only if Firebase has none.
+                        if (!remote || !remote.tgl || !remote.bln || !remote.thn) {
+                            simpanPeriodeAktifBersama();
+                        } else {
+                            terapkanPeriode(remote);
+                        }
                         return;
                     }
                     if (!remote || !remote.tgl || !remote.bln || !remote.thn) return;
-                    if (isUserTyping || autoSaveDebounceTimer !== null) return;
-
-                    var t = parseInt(remote.tgl, 10), b = String(remote.bln).padStart(2, '0'), y = String(remote.thn);
-                    if (t < 1 || t > 31 || !/^\d{2}$/.test(b) || !/^\d{4}$/.test(y)) return;
-                    if (t === tanggalAktif && b === bulanAktif && y === tahunAktif) return;
-
-                    isApplyingSharedPeriod = true;
-                    tanggalAktif = t; bulanAktif = b; tahunAktif = y;
-                    document.getElementById('select-tanggal').value = String(tanggalAktif);
-                    document.getElementById('select-bulan').value = bulanAktif;
-                    document.getElementById('select-tahun').value = tahunAktif;
-                    setupRealtimeListener();
-                    muatDataLocalDanRemote(tanggalAktif, bulanAktif, tahunAktif).finally(function() {
-                        isApplyingSharedPeriod = false;
-                    });
+                    if (isUserTyping || autoSaveDebounceTimer !== null) {
+                        if (pendingPeriodTimer) clearTimeout(pendingPeriodTimer);
+                        pendingPeriodTimer = setTimeout(function() {
+                            pendingPeriodTimer = null;
+                            if (!isUserTyping && autoSaveDebounceTimer === null) terapkanPeriode(remote);
+                        }, 1800);
+                        return;
+                    }
+                    terapkanPeriode(remote);
                 };
                 activePeriodRef.on('value', activePeriodHandler);
             } catch(e) {
-                console.warn("Sinkronisasi periode gagal:", e);
+                console.warn('Sinkronisasi periode gagal:', e);
+                setSyncBadge('error', '⚠️ Periode belum tersinkron');
             }
         }
 
