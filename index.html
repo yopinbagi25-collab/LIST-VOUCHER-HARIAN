@@ -1087,7 +1087,7 @@
                 globalSnapshotReady = true;
 
                 var modal = document.getElementById('modal-rekap');
-                if (modal && modal.style.display !== 'none' && typeof renderRekapBulanan === 'function') {
+                if (modal && modal.style.display === 'flex' && typeof renderRekapBulanan === 'function') {
                     renderRekapBulanan();
                 }
             };
@@ -1842,6 +1842,13 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Rekap bulanan harus selalu tertutup saat file pertama kali dibuka.
+            var modalRekapAwal = document.getElementById('modal-rekap');
+            if (modalRekapAwal) modalRekapAwal.style.display = 'none';
+
+            // Saat link dibuka, tampilkan halaman utama dari bagian paling atas.
+            if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+            window.scrollTo(0, 0);
             try {
                 if(localStorage.getItem('nsnet_darkmode') === 'true') {
                     document.getElementById('body-main').classList.add('dark-mode');
@@ -2039,26 +2046,58 @@
         }
 
         async function resetSemuaTanggal() {
-            if (!confirm('PERINGATAN: Reset SEMUA TANGGAL akan menghapus seluruh data rekapan dari semua tanggal, bulan, dan tahun di Firebase. Tindakan ini tidak dapat dibatalkan.\n\nSebaiknya unduh BACKUP JSON terlebih dahulu. Lanjutkan?')) return;
+            if (!confirm('PERINGATAN: RESET SEMUA TANGGAL akan mengosongkan seluruh data NSNET BILLING untuk tanggal 01-31, bulan Januari-Desember, dan tahun 2020-2040 di Firebase serta semua perangkat yang sedang online. Tindakan ini tidak dapat dibatalkan.\n\nSebaiknya unduh BACKUP JSON terlebih dahulu. Lanjutkan?')) return;
 
             var tombol = document.querySelector('.btn-reset-all');
             if (tombol) { tombol.disabled = true; tombol.textContent = '⏳ SEDANG RESET...'; }
             try {
+                // Tunggu semua penyimpanan tertunda agar tidak menimpa hasil reset.
+                if (autoSaveDebounceTimer) {
+                    clearTimeout(autoSaveDebounceTimer);
+                    autoSaveDebounceTimer = null;
+                }
+                await firebaseWriteQueue.catch(function() {});
+
                 var snapshot = await db.ref('rekapan_harian').once('value');
                 var cloudData = snapshot.val() || {};
-                var cloudCount = Object.keys(cloudData).length;
+                var updates = {};
+                var cloudCount = 0;
+                Object.keys(cloudData).forEach(function(key) {
+                    var match = /^nsnet_rekapan_v46_(\d{4})_(\d{2})_tgl_(\d{2})$/.exec(key);
+                    if (!match) return;
+                    var year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
+                    if (year >= 2020 && year <= 2040 && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+                        updates[key] = null;
+                        cloudCount++;
+                    }
+                });
+
                 var localKeys = [];
                 for (var i = 0; i < localStorage.length; i++) {
                     var key = localStorage.key(i);
-                    if (key && key.indexOf('nsnet_rekapan_v46_') === 0) localKeys.push(key);
+                    var matchLocal = key && /^nsnet_rekapan_v46_(\d{4})_(\d{2})_tgl_(\d{2})$/.exec(key);
+                    if (!matchLocal) continue;
+                    var y = Number(matchLocal[1]), m = Number(matchLocal[2]), d = Number(matchLocal[3]);
+                    if (y >= 2020 && y <= 2040 && m >= 1 && m <= 12 && d >= 1 && d <= 31) localKeys.push(key);
                 }
+
                 var totalCount = Math.max(cloudCount, localKeys.length);
-                if (!confirm('Konfirmasi terakhir: hapus seluruh rekapan?\n\nData tanggal di Firebase: ' + cloudCount + '\nCache tanggal di perangkat ini: ' + localKeys.length + '\n\nSemua rekapan akan dikosongkan.')) return;
+                if (!confirm('Konfirmasi terakhir: kosongkan seluruh rekapan periode 2020-2040?\n\nData Firebase yang akan dihapus: ' + cloudCount + '\nCache lokal perangkat ini: ' + localKeys.length + '\n\nSemua tanggal 01-31 pada Januari-Desember tahun 2020-2040 akan dikosongkan.')) return;
 
                 isRemoteUpdating = true;
-                await db.ref('rekapan_harian').remove();
+                // Multi-location update menghapus seluruh tanggal dalam rentang yang diminta sekaligus.
+                if (Object.keys(updates).length) await db.ref('rekapan_harian').update(updates);
                 localKeys.forEach(function(key) { localStorage.removeItem(key); });
                 lastSavedTimestampByKey = {};
+
+                // Penanda realtime agar perangkat lain yang sedang online segera membersihkan cache.
+                await db.ref('pengaturan/reset_semua').set({
+                    updatedAt: Date.now(),
+                    fromYear: 2020,
+                    toYear: 2040,
+                    scope: 'all-dates-months-years',
+                    by: 'NSNET BILLING'
+                });
 
                 var fields = Array.from(document.querySelectorAll('.save-field'));
                 fields.forEach(function(field) {
@@ -2066,7 +2105,8 @@
                 });
                 hitungUlang();
                 perbaruiTampilanNavigasi();
-                alert('Reset semua tanggal berhasil. Seluruh data rekapan (' + totalCount + ' entri terdeteksi) telah dihapus dari Firebase dan cache lokal.');
+                setSyncBadge('', '☁️ Semua periode 2020-2040 direset');
+                alert('RESET SEMUA TANGGAL berhasil. Seluruh data tanggal 01-31, bulan Januari-Desember, tahun 2020-2040 telah dikosongkan dari Firebase dan cache perangkat ini. Perangkat lain yang sedang online akan menerima perubahan realtime.');
             } catch (err) {
                 console.error('Reset semua tanggal gagal:', err);
                 alert('RESET SEMUA TANGGAL GAGAL. Data tidak dinyatakan terhapus. Periksa koneksi dan izin Firebase, lalu coba lagi.');
